@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-
 from scipy.stats.distributions import chi2
 
 
@@ -37,6 +36,7 @@ class MetricsGenerator:
             columns=[
                 "model",
                 "ar",
+                "ma",
                 "llf",
                 "aic",
                 "bic",
@@ -49,6 +49,7 @@ class MetricsGenerator:
         for model_name, (_, result) in self.models.items():
             self.evaluation.loc[model_name] = {
                 "ar": result.model_orders["ar"],
+                "ma": result.model_orders["ma"],
                 "llf": result.llf,
                 "aic": result.aic,
                 "bic": result.bic,
@@ -80,4 +81,3 @@ class MetricsGenerator:
             ),
             axis=1,
         )
-    
