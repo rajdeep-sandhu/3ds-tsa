@@ -39,7 +39,7 @@ class ModelGenerator:
         return self.models.get(name)
 
     def summarise_results(self):
-        "Display summaries of all results."
+        """Display summaries of all results."""
 
         for model_name in self.models:
             _, result = self.get_model(model_name)
