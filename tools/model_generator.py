@@ -1,7 +1,10 @@
+from typing import Any, Callable
+
+
 class ModelGenerator:
     """Generate a series of models."""
 
-    def __init__(self, data, target=None):
+    def __init__(self, data: Any, target: Any = None) -> None:
         """
         Initialise the ModelGenerator.
 
@@ -13,7 +16,12 @@ class ModelGenerator:
         self.target = target
         self.models = {}
 
-    def generate_models(self, model_function, model_name_prefix, param_grid):
+    def generate_models(
+        self,
+        model_function: Callable[..., Any],
+        model_name_prefix: str,
+        param_grid: list[dict]
+    ) -> None:
         """
         Generate models using the provided model function and parameter grid.
 
@@ -34,11 +42,11 @@ class ModelGenerator:
             
             self.models[model_name] = (model, result)
 
-    def get_model(self, name):
+    def get_model(self, name: str) -> tuple[Any, Any] | None:
         """Return a tuple with a (model, result) with the given name."""
         return self.models.get(name)
 
-    def summarise_results(self):
+    def summarise_results(self) -> None:
         """Display summaries of all results."""
 
         for model_name in self.models:
