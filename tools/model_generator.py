@@ -69,9 +69,7 @@ class ModelGenerator:
         for i, params in enumerate(param_grid):
             # Generate model name
             model_name: str = self._name_model(
-                model_function=model_function,
-                params=params,
-                model_name_prefix=model_name_prefix,
+                model_function=model_function, params=params, prefix=model_name_prefix
             )
             model = model_function(self.data, **params)
 
