@@ -33,7 +33,8 @@ class ModelGenerator:
         - params: dict. Optional. Should contain order argument as tuple for ARIMA models.
         - index: int. Optional. Index to use if no order is available.
         """
-        order = params.get("order")
+
+        order = params.get("order", None) if params else None
 
         model_name = str(prefix) if prefix else model_function.__name__
 
@@ -48,9 +49,7 @@ class ModelGenerator:
         if index and isinstance(index, int):
             return f"{model_name}_{index}"
 
-        raise ValueError(
-            "Cannot generate model name: Invalid arguments."
-        )
+        raise ValueError("Cannot generate model name: Invalid arguments.")
 
     def generate_models(
         self,
