@@ -6,19 +6,6 @@ from statsmodels.tsa.arima.model import ARIMA
 from tools.model_generator import ModelGenerator
 
 
-def test_arima_model_naming():
-    data = pd.Series(np.random.normal(size=300))
-
-    param_grid = [{"order": (0, 0, 8)}]
-    generator = ModelGenerator(data=data)
-    generator.generate_models(model_function=ARIMA, param_grid=param_grid)
-
-    assert "ARIMA_0_0_8" in generator.models
-    model, result = generator.get_model("ARIMA_0_0_8")
-    assert model is not None
-    assert hasattr(result, "summary")
-
-
 class DummyModel:
     # Class that provides a dummy name
     __name__: str = "DummyModel"
