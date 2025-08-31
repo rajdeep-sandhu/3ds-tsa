@@ -1,11 +1,12 @@
 [project]
 name = "time-series-analysis-python"
 version = "0.1.0"
-description = "Add your description here"
+description = "365 Data Science Time Series Analysis project."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "arch>=7.2.0",
+    "marimo>=0.15.2",
     "matplotlib>=3.10.3",
     "numpy>=2.2.5",
     "pandas>=2.2.3",
@@ -18,4 +19,5 @@ dependencies = [
 [dependency-groups]
 dev = [
     "ipykernel>=6.29.5",
+    "pytest>=8.4.1",
 ]
