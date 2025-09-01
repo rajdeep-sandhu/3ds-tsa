@@ -51,7 +51,7 @@ def _(raw_csv_data):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Examine the Data""")
+    mo.md(r"""## Examine the Data""")
     return
 
 
@@ -99,7 +99,7 @@ def _(df_comp):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Plotting the Data""")
+    mo.md(r"""## Plot the Data""")
     return
 
 
