@@ -20,7 +20,7 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Importing the data""")
+    mo.md(r"""## Import the data""")
     return
 
 
@@ -33,43 +33,40 @@ def _(pd):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Length of the Time Period""")
+    mo.md(r"""## Describe the dataset and convert text date to datetime""")
     return
 
 
 @app.cell
-def _(df_comp):
-    df_comp["date"].describe()
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### From Text to Date""")
+def _(df_comp, mo):
+    mo.vstack(
+        [
+            mo.md(f"Before conversion to `datetime`"),
+            df_comp["date"].describe(),
+        ]
+    )
     return
 
 
 @app.cell
 def _(df_comp, pd):
     df_comp["date"] = pd.to_datetime(df_comp["date"], dayfirst=True)
+    df_comp
     return
 
 
 @app.cell
-def _(df_comp):
-    df_comp.head()
-    return
-
-
-@app.cell
-def _(df_comp):
-    df_comp["date"].describe()
-    return
-
-
-@app.cell
-def _(df_comp):
-    df_comp["date"].nunique()
+def _(df_comp, mo):
+    mo.vstack(
+        [
+            mo.md("After conversion to `datetime`"),
+            df_comp["date"].describe(),
+            mo.stat(
+                value=df_comp["date"].nunique(),
+                label="Unique Dates",
+            ),
+        ]
+    )
     return
 
 
@@ -94,7 +91,7 @@ def _(mo):
 
 @app.cell
 def _(df_indexed):
-    df_indexed_1 = df_indexed.asfreq('b')
+    df_indexed_1 = df_indexed.asfreq("b")
     df_indexed_1.head()
     return (df_indexed_1,)
 
@@ -158,7 +155,7 @@ def _(mo):
 
 @app.cell
 def _(df_indexed_1):
-    df_spx = df_indexed_1[['spx']].rename({'spx': 'market_value'}, axis='columns')
+    df_spx = df_indexed_1[["spx"]].rename({"spx": "market_value"}, axis="columns")
     df_spx.head()
     return (df_spx,)
 
@@ -203,7 +200,9 @@ def _(df_spx, train_size):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""Compare the tail of df_train with the head of df_test to ensure the last value does not overlap""")
+    mo.md(
+        r"""Compare the tail of df_train with the head of df_test to ensure the last value does not overlap"""
+    )
     return
 
 
