@@ -6,32 +6,24 @@ app = marimo.App()
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Import the Packages
-
-        """
-    )
+    mo.md(r"""### Import the Packages""")
     return
 
 
 @app.cell
 def _():
-    import pandas as pd
-    import numpy as np
+    import marimo as mo
+
     import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
     import seaborn as sns
-    return pd, plt, sns
+    return mo, pd, plt, sns
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Importing the Data
-
-        """
-    )
+    mo.md(r"""### Importing the Data""")
     return
 
 
@@ -39,16 +31,15 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-        Get closing prices of market indices:
+    Get closing prices of market indices:
 
-        - spx: S&P500
-        - dax: DAX 30
-        - ftse: FTSE 100
-        - nikkei: NIKKEI 225
+    - spx: S&P500
+    - dax: DAX 30
+    - ftse: FTSE 100
+    - nikkei: NIKKEI 225
 
-        These measure the stability of the following stock exchanges: US, Germany, London, Japan
-
-        """
+    These measure the stability of the following stock exchanges: US, Germany, London, Japan
+    """
     )
     return
 
@@ -67,12 +58,7 @@ def _(raw_csv_data):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Examining the Data
-
-        """
-    )
+    mo.md(r"""### Examining the Data""")
     return
 
 
@@ -93,12 +79,11 @@ def _(df_comp):
 def _(mo):
     mo.md(
         r"""
-        - The mean of spx is much lower than for other indices.
-        - Its maximum is lower than the minimums of ftse and nikkei.
-        - Tha values for dax and ftse are similar, while those of spx are far smaller and, nikkey, much larger.
-        - This difference in magnitude needs to be taken into account when comparing multiple time series.
-
-        """
+    - The mean of spx is much lower than for other indices.
+    - Its maximum is lower than the minimums of ftse and nikkei.
+    - Tha values for dax and ftse are similar, while those of spx are far smaller and, nikkey, much larger.
+    - This difference in magnitude needs to be taken into account when comparing multiple time series.
+    """
     )
     return
 
@@ -117,12 +102,7 @@ def _(df_comp):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### Plotting the Data
-
-        """
-    )
+    mo.md(r"""### Plotting the Data""")
     return
 
 
@@ -148,12 +128,7 @@ def _(df_comp, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        - The first two peaks are the dotcom and the housing market bubbles respectively. These are mirrored by S&P00 and FTSE. This can be explained by the parallels between the US and the UK stock exchange markets.
-
-        """
-    )
+    mo.md(r"""- The first two peaks are the dotcom and the housing market bubbles respectively. These are mirrored by S&P00 and FTSE. This can be explained by the parallels between the US and the UK stock exchange markets.""")
     return
 
 
@@ -170,23 +145,13 @@ def _(df_comp, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        - When plotted together, the S&P curve flattens. This does not imply relative stability and is due to the difference in magnitude of values between the two indices. This is one of the reasons why time series analysis involves compounded returns along with prices.
-
-        """
-    )
+    mo.md(r"""- When plotted together, the S&P curve flattens. This does not imply relative stability and is due to the difference in magnitude of values between the two indices. This is one of the reasons why time series analysis involves compounded returns along with prices.""")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        ### The QQ Plot
-
-        """
-    )
+    mo.md(r"""### The QQ Plot""")
     return
 
 
@@ -206,18 +171,8 @@ def _(df_comp, pylab, scipy):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
-        The dataset is not normally distributed, which means that the statistics of normal distributions cannot be used to make successful forecasts. However, this is as expected for time series data.
-        """
-    )
+    mo.md(r"""The dataset is not normally distributed, which means that the statistics of normal distributions cannot be used to make successful forecasts. However, this is as expected for time series data.""")
     return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
 
 
 if __name__ == "__main__":
