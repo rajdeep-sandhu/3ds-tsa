@@ -6,7 +6,7 @@ app = marimo.App()
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Import the Packages""")
+    mo.md(r"""# 03. Introduction to Time Series""")
     return
 
 
@@ -23,22 +23,15 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Importing the Data""")
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
     mo.md(
         r"""
-    Get closing prices of market indices:
+    ## Get closing prices of market indices.
+    These measure the stability of the following stock exchanges: US, Germany, London, Japan.
 
     - spx: S&P500
     - dax: DAX 30
     - ftse: FTSE 100
     - nikkei: NIKKEI 225
-
-    These measure the stability of the following stock exchanges: US, Germany, London, Japan
     """
     )
     return
@@ -58,7 +51,7 @@ def _(raw_csv_data):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Examining the Data""")
+    mo.md(r"""### Examine the Data""")
     return
 
 
@@ -128,7 +121,9 @@ def _(df_comp, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""- The first two peaks are the dotcom and the housing market bubbles respectively. These are mirrored by S&P00 and FTSE. This can be explained by the parallels between the US and the UK stock exchange markets.""")
+    mo.md(
+        r"""- The first two peaks are the dotcom and the housing market bubbles respectively. These are mirrored by S&P00 and FTSE. This can be explained by the parallels between the US and the UK stock exchange markets."""
+    )
     return
 
 
@@ -145,7 +140,9 @@ def _(df_comp, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""- When plotted together, the S&P curve flattens. This does not imply relative stability and is due to the difference in magnitude of values between the two indices. This is one of the reasons why time series analysis involves compounded returns along with prices.""")
+    mo.md(
+        r"""- When plotted together, the S&P curve flattens. This does not imply relative stability and is due to the difference in magnitude of values between the two indices. This is one of the reasons why time series analysis involves compounded returns along with prices."""
+    )
     return
 
 
@@ -164,14 +161,16 @@ def _():
 
 @app.cell
 def _(df_comp, pylab, scipy):
-    scipy.stats.probplot(df_comp['spx'], plot=pylab)
+    scipy.stats.probplot(df_comp["spx"], plot=pylab)
     pylab.show()
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The dataset is not normally distributed, which means that the statistics of normal distributions cannot be used to make successful forecasts. However, this is as expected for time series data.""")
+    mo.md(
+        r"""The dataset is not normally distributed, which means that the statistics of normal distributions cannot be used to make successful forecasts. However, this is as expected for time series data."""
+    )
     return
 
 
