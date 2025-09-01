@@ -12,9 +12,10 @@ def _(mo):
 
 @app.cell
 def _():
-    import pandas as pd
+    import marimo as mo
     import numpy as np
-    return (pd,)
+    import pandas as pd
+    return mo, pd
 
 
 @app.cell(hide_code=True)
@@ -216,12 +217,6 @@ def _(df_train):
 def _(df_test):
     df_test.head()
     return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
 
 
 if __name__ == "__main__":
