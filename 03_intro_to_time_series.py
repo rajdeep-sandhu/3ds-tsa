@@ -17,8 +17,10 @@ def _():
     import matplotlib.pyplot as plt
     import numpy as np
     import pandas as pd
+    import pylab
+    import scipy.stats
     import seaborn as sns
-    return mo, pd, plt, sns
+    return mo, pd, plt, pylab, scipy, sns
 
 
 @app.cell(hide_code=True)
@@ -103,6 +105,12 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""### Line charts""")
+    return
+
+
 @app.cell
 def _(sns):
     sns.set_theme(context="notebook", style="white")
@@ -152,13 +160,6 @@ def _(mo):
 def _(mo):
     mo.md(r"""### The QQ Plot""")
     return
-
-
-@app.cell
-def _():
-    import scipy.stats
-    import pylab
-    return pylab, scipy
 
 
 @app.cell
