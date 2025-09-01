@@ -57,14 +57,18 @@ def _(mo):
 
 @app.cell
 def _(df_comp):
-    df_comp.head()
+    df_comp
     return
 
 
 @app.cell
-def _(df_comp):
-    # Get an overview of the numeric fields
-    df_comp.describe()
+def _(df_comp, mo):
+    mo.vstack(
+        [
+            mo.md("Get an overview of the numeric fields"),
+            df_comp.describe(),
+        ]
+    )
     return
 
 
@@ -72,9 +76,9 @@ def _(df_comp):
 def _(mo):
     mo.md(
         r"""
-    - The mean of spx is much lower than for other indices.
-    - Its maximum is lower than the minimums of ftse and nikkei.
-    - Tha values for dax and ftse are similar, while those of spx are far smaller and, nikkey, much larger.
+    - The mean of `spx` is much lower than for other indices.
+    - Its maximum is lower than the minimums of `ftse` and `nikkei`.
+    - Tha values for `dax` and `ftse` are similar, while those of `spx` are far smaller and, `nikkei`, much larger.
     - This difference in magnitude needs to be taken into account when comparing multiple time series.
     """
     )
