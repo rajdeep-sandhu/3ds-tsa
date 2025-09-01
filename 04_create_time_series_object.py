@@ -6,7 +6,7 @@ app = marimo.App()
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Importing the Packages""")
+    mo.md(r"""# 04. Create a Time Series Object in Python""")
     return
 
 
