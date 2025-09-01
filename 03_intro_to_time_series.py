@@ -111,14 +111,12 @@ def _(sns):
 
 @app.cell
 def _(df_comp, plt):
-    df_comp["spx"].plot(figsize=(20, 5), title="S&P00")
+    # Plot spx
+    df_comp["spx"].plot(figsize=(20, 5), title="S&P500")
     plt.show()
-    return
 
-
-@app.cell
-def _(df_comp, plt):
-    df_comp["ftse"].plot(figsize=(20, 5), title="S&P00")
+    # Plot ftse
+    df_comp["ftse"].plot(figsize=(20, 5), title="FTSE")
     plt.show()
     return
 
@@ -136,7 +134,7 @@ def _(df_comp, plt):
     plt.figure(figsize=(20, 5))
     df_comp["spx"].plot(label="S&P500")
     df_comp["ftse"].plot(label="FTSE100")
-    plt.title("S&P00 vs FTSE100")
+    plt.title("S&P500 vs FTSE100")
     plt.legend()
     plt.show()
     return
