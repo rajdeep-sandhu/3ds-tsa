@@ -1,7 +1,7 @@
 import marimo
 
 __generated_with = "0.15.2"
-app = marimo.App()
+app = marimo.App(width="full", app_title="04. Create a Time Series Object")
 
 
 @app.cell(hide_code=True)
