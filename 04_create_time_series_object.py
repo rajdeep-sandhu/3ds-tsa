@@ -26,6 +26,9 @@ def _(mo):
 
 @app.cell
 def _(mo, pd):
+    # Cache to avoid reloading each time a cell is rerun.
+
+
     @mo.cache
     def load_csv_data():
         return pd.read_csv("Index2018.csv")
@@ -118,36 +121,51 @@ def _(mo):
 
 
 @app.cell
-def _(df_indexed_1):
-    df_filled = df_indexed_1.copy()
-    df_filled.isna().sum()
-    return (df_filled,)
+def _(mo, pd):
+    def fill_missing_values(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Fill missing values using different approaches (for demonstration).
+        For marimo, all steps involving reassigning to the same variable need to be in a single cell,
+        or wrapped in a function.
+        Otherwise, rerunning after changing code uses the final value and causes errors.
+        """
+
+        df_filled = data.copy()
+        mo.output.replace(df_filled.isna().sum())
+
+        # Forward fill spx
+        df_filled["spx"] = df_filled["spx"].ffill()
+        mo.output.append(
+            mo.vstack([mo.md("Forward fill `spx`"), df_filled.isna().sum()])
+        )
+
+        # Backfill ftse
+        df_filled["ftse"] = df_filled["ftse"].bfill()
+        mo.output.append(
+            mo.vstack([mo.md("Backfill `ftse`"), df_filled.isna().sum()])
+        )
+
+        # Fill dax and nikkei with their mean values
+        for ticker in ["dax", "nikkei"]:
+            mean_price = df_filled[ticker].mean()
+            df_filled[ticker] = df_filled[ticker].fillna(mean_price)
+
+        mo.output.append(
+            mo.vstack(
+                [
+                    mo.md("Fill `dax` and `nikkei` with their mean values"),
+                    df_filled.isna().sum(),
+                ]
+            )
+        )
+
+        return df_filled
+    return (fill_missing_values,)
 
 
 @app.cell
-def _(df_filled):
-    # Forward fill spx
-    df_filled["spx"] = df_filled["spx"].ffill()
-    df_filled.isna().sum()
-    return
-
-
-@app.cell
-def _(df_filled):
-    # Backfill ftse
-    df_filled["ftse"] = df_filled["ftse"].bfill()
-    df_filled.isna().sum()
-    return
-
-
-@app.cell
-def _(df_filled):
-    # Fill dax and nikkei with their mean values
-    for ticker in ["dax", "nikkei"]:
-        mean_price = df_filled[ticker].mean()
-        df_filled[ticker] = df_filled[ticker].fillna(mean_price)
-
-    df_filled.isna().sum()
+def _(df_indexed_1, fill_missing_values):
+    df_filled = fill_missing_values(data=df_indexed_1)
     return
 
 
