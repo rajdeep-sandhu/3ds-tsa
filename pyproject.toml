@@ -23,3 +23,6 @@ dev = [
     "python-lsp-server>=1.13.1",
     "ruff>=0.12.11",
 ]
+
+[tool.marimo.language_servers.pylsp]
+enabled = true
