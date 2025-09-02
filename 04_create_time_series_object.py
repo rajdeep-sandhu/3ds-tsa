@@ -25,9 +25,12 @@ def _(mo):
 
 
 @app.cell
-def _(pd):
-    raw_csv_data = pd.read_csv("Index2018.csv")
-    df_comp = raw_csv_data.copy()
+def _(mo, pd):
+    @mo.cache
+    def load_csv_data():
+        return pd.read_csv("Index2018.csv")
+
+    df_comp = load_csv_data().copy()
     return (df_comp,)
 
 
@@ -72,20 +75,26 @@ def _(df_comp, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Setting the Index""")
+    mo.md(r"""## Set the Index to `date`""")
     return
 
 
 @app.cell
 def _(df_comp):
+    # Set the index
     df_indexed = df_comp.set_index("date")
-    df_indexed.head()
+    df_indexed
     return (df_indexed,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Setting the Desired Frequency""")
+    mo.md(
+        r"""
+    ## Setting the frequency to business days
+    This is based on financial data being on weekdays.
+    """
+    )
     return
 
 
