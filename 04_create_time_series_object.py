@@ -30,6 +30,7 @@ def _(mo, pd):
     def load_csv_data():
         return pd.read_csv("Index2018.csv")
 
+
     df_comp = load_csv_data().copy()
     return (df_comp,)
 
@@ -91,7 +92,7 @@ def _(df_comp):
 def _(mo):
     mo.md(
         r"""
-    ## Setting the frequency to business days
+    ## Set the frequency to business days
     This is based on financial data being on weekdays.
     """
     )
@@ -101,7 +102,7 @@ def _(mo):
 @app.cell
 def _(df_indexed):
     df_indexed_1 = df_indexed.asfreq("b")
-    df_indexed_1.head()
+    df_indexed_1
     return (df_indexed_1,)
 
 
@@ -109,8 +110,8 @@ def _(df_indexed):
 def _(mo):
     mo.md(
         r"""
-    ### Handling Missing Values
-    - This is for illustration only. Practically, a consistent approach should be used.
+    ## Handle Missing Values
+    - Different approaches are used here for illustration only. In practice, a consistent approach should be used, depending on how best to handle missing values in that partivular series or dataset.
     """
     )
     return
