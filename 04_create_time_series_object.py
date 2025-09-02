@@ -27,8 +27,6 @@ def _(mo):
 @app.cell
 def _(mo, pd):
     # Cache to avoid reloading each time a cell is rerun.
-
-
     @mo.cache
     def load_csv_data():
         return pd.read_csv("Index2018.csv")
@@ -166,44 +164,39 @@ def _(mo, pd):
 @app.cell
 def _(df_indexed_1, fill_missing_values):
     df_filled = fill_missing_values(data=df_indexed_1)
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### Simplifying the Dataset""")
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""Simplify the dataframe to keep only `spx` market values.""")
-    return
-
-
-@app.cell
-def _(df_indexed_1):
-    df_spx = df_indexed_1[["spx"]].rename({"spx": "market_value"}, axis="columns")
-    df_spx.head()
-    return (df_spx,)
-
-
-@app.cell
-def _(df_spx):
-    df_spx.describe()
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### Splitting the Data""")
-    return
+    return (df_filled,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
+    ## Simplify the Dataset
+    Keep only `spx` market values.
+    """
+    )
+    return
+
+
+@app.cell
+def _(df_filled, mo):
+    df_spx = df_filled[["spx"]].rename({"spx": "market_value"}, axis="columns")
+    mo.vstack(
+        [
+            mo.md("Keep only `spx`"),
+            df_spx.head(),
+            mo.md("Decribe the data"),
+            df_spx.describe(),
+        ]
+    )
+    return (df_spx,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    ## Split the Data
     - Time series data cannot be shuffled.
     - A cut off point is used. Data prior to this is assigned to the training set. Data following this is assigned to the testing set.
     - An 80:20 split for training and testing data is reasonable to prevent overfitting and maintain accuracy.
@@ -213,9 +206,9 @@ def _(mo):
 
 
 @app.cell
-def _(df_spx):
+def _(df_spx, mo):
     train_size = int(df_spx.shape[0] * 0.8)
-    train_size
+    mo.stat(value=train_size, label="train_size", caption="Training Set Size")
     return (train_size,)
 
 
@@ -228,21 +221,20 @@ def _(df_spx, train_size):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""Compare the tail of df_train with the head of df_test to ensure the last value does not overlap"""
+    mo.md(r""" """)
+    return
+
+
+@app.cell
+def _(df_test, df_train, mo):
+    mo.vstack(
+        [
+            mo.md(
+                "Compare the tail of df_train with the head of df_test to ensure the last value does not overlap"
+            ),
+            mo.hstack([df_train.tail(), df_test.head()], justify="space-around"),
+        ],
     )
-    return
-
-
-@app.cell
-def _(df_train):
-    df_train.tail()
-    return
-
-
-@app.cell
-def _(df_test):
-    df_test.head()
     return
 
 
