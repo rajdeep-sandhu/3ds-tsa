@@ -35,6 +35,7 @@ def _(mo, yfinance):
     # Download the data
     @mo.cache
     def download_data():
+        """Download stock data from Yahoo! Finance."""
         return yfinance.download(
             tickers="^GSPC ^FTSE ^N225 ^GDAXI",
             start="1994-01-07",
@@ -51,7 +52,7 @@ def _(mo, yfinance):
 
 @app.cell
 def _(raw_data):
-    # Creating a back up copy in case we remove/alter elements of the data by mistake
+    # Work on a copy of the downloaded data
     df_comp = raw_data.copy()
     df_comp
     return (df_comp,)
@@ -77,6 +78,7 @@ def _(df_comp):
     del df_comp_1['^FTSE']
     df_comp_1 = df_comp_1.asfreq('b')
     df_comp_1 = df_comp_1.fillna(method='ffill')
+    df_comp_1
     return (df_comp_1,)
 
 
