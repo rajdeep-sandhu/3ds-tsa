@@ -21,7 +21,7 @@ def _():
     import pandas as pd
     import yfinance
     import warnings
-    return mo, warnings, yfinance
+    return mo, pd, warnings, yfinance
 
 
 @app.cell
@@ -32,10 +32,10 @@ def _(warnings):
 
 
 @app.cell
-def _(mo, yfinance):
+def _(mo, pd, yfinance):
     # Download the data
     @mo.cache
-    def download_data():
+    def download_data() -> pd.DataFrame:
         """Download stock data from Yahoo! Finance."""
         return yfinance.download(
             tickers="^GSPC ^FTSE ^N225 ^GDAXI",
@@ -47,12 +47,12 @@ def _(mo, yfinance):
             threads=True,
         )
 
-    raw_data = download_data()
+    raw_data: pd.DataFrame = download_data()
     return (raw_data,)
 
 
 @app.cell
-def _(raw_data):
+def _(raw_data: "pd.DataFrame"):
     # Work on a copy of the downloaded data
     df_comp = raw_data.copy()
     df_comp
