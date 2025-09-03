@@ -66,16 +66,19 @@ def _(pd):
         Create columns for closing prices.
         Delete original columns.
         """
-        # Adding new columns to the data set
-        data['spx'] = data['^GSPC'].Close
-        data['dax'] = data['^GDAXI'].Close
-        data['ftse'] = data['^FTSE'].Close
-        data['nikkei'] = data['^N225'].Close
+
+        close_prices = data.copy()
+    
+        # Add new columns to the data set
+        close_prices['spx'] = close_prices['^GSPC'].Close
+        close_prices['dax'] = close_prices['^GDAXI'].Close
+        close_prices['ftse'] = close_prices['^FTSE'].Close
+        close_prices['nikkei'] = close_prices['^N225'].Close
 
         # Delete original columns
-        del data['^N225'], data['^GSPC'], data['^GDAXI'], data['^FTSE']
+        del close_prices['^N225'], close_prices['^GSPC'], close_prices['^GDAXI'], close_prices['^FTSE']
 
-        return data
+        return close_prices
     return (get_close_prices,)
 
 
