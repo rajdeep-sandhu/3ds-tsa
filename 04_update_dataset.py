@@ -17,15 +17,15 @@ def _(mo):
 
 @app.cell
 def _():
-    # Importing the necessary package 
+    import marimo as mo
     import yfinance
-    return (yfinance,)
+    import warnings
+    return mo, warnings, yfinance
 
 
 @app.cell
-def _():
+def _(warnings):
     # Ignoring warning messages
-    import warnings 
     warnings.filterwarnings("ignore")
     return
 
@@ -90,12 +90,6 @@ def _(df_comp_1):
     print(df_comp_1.head())
     print(df_comp_1.tail())
     return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
 
 
 if __name__ == "__main__":
