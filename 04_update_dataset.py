@@ -80,20 +80,28 @@ def _(pd):
 
 
 @app.cell
-def _(df_comp: "pd.DataFrame", get_close_prices, pd):
-    df_comp_1: pd.DataFrame = get_close_prices(df_comp)
-    df_comp_1 = df_comp.iloc[1:]
+def _(pd):
+    def clean_data(data: pd.DataFrame) -> pd.DataFrame:
+        """Return cleaned dataset."""
+        df_comp_cleaned: pd.DataFrame = data.copy()
 
-    df_comp_1 = df_comp_1.asfreq('b')
-    df_comp_1 = df_comp_1.fillna(method='ffill')
-    df_comp_1
-    return (df_comp_1,)
+        # Remove first row to start on a Monday
+        df_comp_cleaned = df_comp_cleaned.iloc[1:]
+
+        # Set index to business days.
+        df_comp_cleaned = df_comp_cleaned.asfreq("b")
+
+        # Forward fill missing data
+        df_comp_cleaned = df_comp_cleaned.fillna(method="ffill")
+
+        return df_comp_cleaned
+    return (clean_data,)
 
 
 @app.cell
-def _(df_comp_1: "pd.DataFrame"):
-    print(df_comp_1.head())
-    print(df_comp_1.tail())
+def _(clean_data, df_comp: "pd.DataFrame", get_close_prices, pd):
+    df_comp_close: pd.DataFrame = clean_data(get_close_prices(df_comp))
+    df_comp_close
     return
 
 
