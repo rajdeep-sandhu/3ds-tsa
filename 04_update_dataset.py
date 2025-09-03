@@ -18,6 +18,7 @@ def _(mo):
 @app.cell
 def _():
     import marimo as mo
+    import pandas as pd
     import yfinance
     import warnings
     return mo, warnings, yfinance
