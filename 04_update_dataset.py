@@ -4,6 +4,17 @@ __generated_with = "0.15.2"
 app = marimo.App(width="full", app_title="04. Update Dataset")
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    # Update Dataset from Yahoo! Finance
+    This illustrates updating the dataset from the Yahoo! Finance API. However, the data is not saved, as the provided dataset will be used for analysis.
+    """
+    )
+    return
+
+
 @app.cell
 def _():
     # Importing the necessary package 
@@ -79,6 +90,12 @@ def _(df_comp_1):
     print(df_comp_1.head())
     print(df_comp_1.tail())
     return
+
+
+@app.cell
+def _():
+    import marimo as mo
+    return (mo,)
 
 
 if __name__ == "__main__":
