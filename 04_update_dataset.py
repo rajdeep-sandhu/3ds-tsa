@@ -47,6 +47,7 @@ def _(mo, pd, yfinance):
             threads=True,
         )
 
+
     raw_data: pd.DataFrame = download_data()
     return (raw_data,)
 
@@ -68,15 +69,20 @@ def _(pd):
         """
 
         close_prices = data.copy()
-    
+
         # Add new columns to the data set
-        close_prices['spx'] = close_prices['^GSPC'].Close
-        close_prices['dax'] = close_prices['^GDAXI'].Close
-        close_prices['ftse'] = close_prices['^FTSE'].Close
-        close_prices['nikkei'] = close_prices['^N225'].Close
+        close_prices["spx"] = close_prices["^GSPC"].Close
+        close_prices["dax"] = close_prices["^GDAXI"].Close
+        close_prices["ftse"] = close_prices["^FTSE"].Close
+        close_prices["nikkei"] = close_prices["^N225"].Close
 
         # Delete original columns
-        del close_prices['^N225'], close_prices['^GSPC'], close_prices['^GDAXI'], close_prices['^FTSE']
+        del (
+            close_prices["^N225"],
+            close_prices["^GSPC"],
+            close_prices["^GDAXI"],
+            close_prices["^FTSE"],
+        )
 
         return close_prices
     return (get_close_prices,)
@@ -103,8 +109,9 @@ def _(pd):
 
 @app.cell
 def _(clean_data, df_comp: "pd.DataFrame", get_close_prices, pd):
-    df_comp_close: pd.DataFrame = clean_data(get_close_prices(df_comp))
-    df_comp_close
+    df_comp_close: pd.DataFrame = get_close_prices(df_comp)
+    df_comp_cleaned: pd.DataFrame = clean_data(df_comp_close)
+    df_comp_cleaned
     return
 
 
