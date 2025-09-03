@@ -52,31 +52,38 @@ def _(mo, pd, yfinance):
 
 
 @app.cell
-def _(raw_data: "pd.DataFrame"):
+def _(pd, raw_data: "pd.DataFrame"):
     # Work on a copy of the downloaded data
-    df_comp = raw_data.copy()
+    df_comp: pd.DataFrame = raw_data.copy()
     df_comp
     return (df_comp,)
 
 
 @app.cell
-def _(df_comp):
-    # Adding new columns to the data set
-    df_comp['spx'] = df_comp['^GSPC'].Close
-    df_comp['dax'] = df_comp['^GDAXI'].Close
-    df_comp['ftse'] = df_comp['^FTSE'].Close
-    df_comp['nikkei'] = df_comp['^N225'].Close
-    df_comp.head()
-    return
+def _(pd):
+    def get_close_prices(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Create columns for closing prices.
+        Delete original columns.
+        """
+        # Adding new columns to the data set
+        data['spx'] = data['^GSPC'].Close
+        data['dax'] = data['^GDAXI'].Close
+        data['ftse'] = data['^FTSE'].Close
+        data['nikkei'] = data['^N225'].Close
+
+        # Delete original columns
+        del data['^N225'], data['^GSPC'], data['^GDAXI'], data['^FTSE']
+
+        return data
+    return (get_close_prices,)
 
 
 @app.cell
-def _(df_comp):
+def _(df_comp: "pd.DataFrame", get_close_prices, pd):
+    df_comp_1: pd.DataFrame = get_close_prices(df_comp)
     df_comp_1 = df_comp.iloc[1:]
-    del df_comp_1['^N225']
-    del df_comp_1['^GSPC']
-    del df_comp_1['^GDAXI']
-    del df_comp_1['^FTSE']
+
     df_comp_1 = df_comp_1.asfreq('b')
     df_comp_1 = df_comp_1.fillna(method='ffill')
     df_comp_1
@@ -84,7 +91,7 @@ def _(df_comp):
 
 
 @app.cell
-def _(df_comp_1):
+def _(df_comp_1: "pd.DataFrame"):
     print(df_comp_1.head())
     print(df_comp_1.tail())
     return
