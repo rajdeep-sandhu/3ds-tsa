@@ -6,44 +6,54 @@ app = marimo.App(width="full", app_title="05. Working with Time Series")
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Importing Relevant Packages""")
+    mo.md(r"""# 05. Working with Time Series""")
     return
 
 
 @app.cell
 def _():
-    import pandas as pd
-    import numpy as np
+    import marimo as mo
     import matplotlib.pyplot as plt
+    import numpy as np
+    import pandas as pd
+    import seaborn as sns
     import statsmodels.graphics.tsaplots as sgt
     import statsmodels.tsa.stattools as sts
+
     from statsmodels.tsa.seasonal import seasonal_decompose
-    import seaborn as sns
+    return mo, np, pd, plt, seasonal_decompose, sgt, sns, sts
 
+
+@app.cell
+def _(sns):
     sns.set_theme(context="notebook", style="white")
-    return np, pd, plt, seasonal_decompose, sgt, sts
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r""" """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Loading and Transforming the Data""")
+    mo.md(r"""## Loading, transforming and simplify the dataset""")
     return
 
 
 @app.cell
-def _(pd):
-    raw_csv_data = pd.read_csv("Index2018.csv")
+def _(mo, pd):
+    @mo.cache
+    def load_data() -> pd.DataFrame:
+        print("Reading from disk")
+        return pd.read_csv("Index2018.csv")
+    return (load_data,)
+
+
+@app.cell
+def _(load_data, pd):
+    raw_csv_data = load_data()
     df_comp = raw_csv_data.copy()
     df_comp.date = pd.to_datetime(df_comp.date, dayfirst=True)
     df_comp.set_index("date", inplace=True)
     df_comp = df_comp.asfreq("b")  # Set frequency to business days
     df_comp = df_comp.ffill()
+    df_comp
     return (df_comp,)
 
 
@@ -559,12 +569,6 @@ def _(df, plt, sgt):
 def _(mo):
     mo.md(r"""- The pattern is similar to that of S&P500.""")
     return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
 
 
 if __name__ == "__main__":
