@@ -32,7 +32,7 @@ def _(sns):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Loading, transforming and simplify the dataset""")
+    mo.md(r"""## Load, transform and simplify the dataset""")
     return
 
 
