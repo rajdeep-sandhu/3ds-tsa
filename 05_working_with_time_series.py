@@ -39,28 +39,42 @@ def _(mo):
 @app.cell
 def _(mo, pd):
     @mo.cache
-    def load_data() -> pd.DataFrame:
+    def load_data(file_path: str) -> pd.DataFrame:
         print("Reading from disk")
-        return pd.read_csv("Index2018.csv")
+        return pd.read_csv(file_path)
     return (load_data,)
 
 
 @app.cell
 def _(load_data, pd):
-    raw_csv_data = load_data()
-    df_comp = raw_csv_data.copy()
-    df_comp.date = pd.to_datetime(df_comp.date, dayfirst=True)
-    df_comp.set_index("date", inplace=True)
-    df_comp = df_comp.asfreq("b")  # Set frequency to business days
-    df_comp = df_comp.ffill()
+    csv_file: str = "Index2018.csv"
+    raw_csv_data: pd.DataFrame = load_data(csv_file)
+    return (raw_csv_data,)
+
+
+@app.cell
+def _(pd):
+    def clean_dataset(data: pd.DataFrame) -> pd.DataFrame:
+        """Clean the provided dataset."""
+        df_cleaned: pd.DataFrame = data.copy()
+
+        # Set date as index with frequency as business days.
+        df_cleaned.date = pd.to_datetime(df_cleaned.date, dayfirst=True)
+        df_cleaned.set_index("date", inplace=True)
+        df_cleaned = df_cleaned.asfreq("b")
+
+        # Forward fill missing values
+        df_cleaned = df_cleaned.ffill()
+    
+        return df_cleaned
+    return (clean_dataset,)
+
+
+@app.cell
+def _(clean_dataset, pd, raw_csv_data: "pd.DataFrame"):
+    df_comp: pd.DataFrame = clean_dataset(raw_csv_data)
     df_comp
     return (df_comp,)
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r""" """)
-    return
 
 
 @app.cell(hide_code=True)
@@ -70,13 +84,13 @@ def _(mo):
 
 
 @app.cell
-def _(df_comp):
+def _(df_comp: "pd.DataFrame"):
     df_comp["market_value"] = df_comp.spx
     return
 
 
 @app.cell
-def _(df_comp):
+def _(df_comp: "pd.DataFrame"):
     del df_comp["spx"]
     del df_comp["dax"]
     del df_comp["ftse"]
@@ -120,7 +134,9 @@ def _(df):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx.""")
+    mo.md(
+        r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx."""
+    )
     return
 
 
@@ -142,7 +158,9 @@ def _(df, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph.""")
+    mo.md(
+        r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph."""
+    )
     return
 
 
@@ -284,7 +302,7 @@ def _(mo):
 
 @app.cell
 def _(df, sts):
-    result_1 = sts.adfuller(df['white_noise'])
+    result_1 = sts.adfuller(df["white_noise"])
     result_1
     return (result_1,)
 
@@ -315,7 +333,7 @@ def _(mo):
 
 @app.cell
 def _(df, sts):
-    result_2 = sts.adfuller(df['random_walk'])
+    result_2 = sts.adfuller(df["random_walk"])
     result_2
     return (result_2,)
 
@@ -386,7 +404,9 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.""")
+    mo.md(
+        r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices."""
+    )
     return
 
 
@@ -501,7 +521,9 @@ def _(mo):
 
 @app.cell
 def _(df, plt, sgt):
-    sgt.plot_pacf(df["market_value"], lags=40, zero=False, method="ols", auto_ylims=True)
+    sgt.plot_pacf(
+        df["market_value"], lags=40, zero=False, method="ols", auto_ylims=True
+    )
     plt.title("PACF: S&P500", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
@@ -530,7 +552,9 @@ def _(mo):
 
 @app.cell
 def _(df, plt, sgt):
-    sgt.plot_pacf(df["white_noise"], lags=40, zero=False, method="ols", auto_ylims=True)
+    sgt.plot_pacf(
+        df["white_noise"], lags=40, zero=False, method="ols", auto_ylims=True
+    )
     plt.title("PACF: White Noise", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
@@ -557,7 +581,9 @@ def _(mo):
 
 @app.cell
 def _(df, plt, sgt):
-    sgt.plot_pacf(df["random_walk"], lags=40, zero=False, method="ols", auto_ylims=True)
+    sgt.plot_pacf(
+        df["random_walk"], lags=40, zero=False, method="ols", auto_ylims=True
+    )
     plt.title("PACF: Random Walk", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
