@@ -67,9 +67,26 @@ def _(pd):
 
         # Forward fill missing values
         df_cleaned = df_cleaned.ffill()
-    
+
         return df_cleaned
     return (clean_dataset,)
+
+
+@app.cell
+def _(pd):
+    def simplify_dataset(data: pd.DataFrame) -> pd.DataFrame:
+        """Simplify dataset to a single spx market value column."""
+
+        data_copy: pd.DataFrame = data.copy()
+        data_copy["market_value"] = data_copy.spx
+
+        del data_copy["spx"]
+        del data_copy["dax"]
+        del data_copy["ftse"]
+        del data_copy["nikkei"]
+
+        return data_copy
+    return (simplify_dataset,)
 
 
 @app.cell
@@ -79,26 +96,17 @@ def _(clean_dataset, pd, raw_csv_data: "pd.DataFrame"):
     return (df_comp,)
 
 
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""### Removing Surplus Data""")
-    return
+@app.cell
+def _(df_comp: "pd.DataFrame", pd, simplify_dataset):
+    df_spx: pd.DataFrame = simplify_dataset(df_comp)
+    return (df_spx,)
 
 
 @app.cell
-def _(df_comp: "pd.DataFrame"):
-    df_comp["market_value"] = df_comp.spx
-    return
-
-
-@app.cell
-def _(df_comp: "pd.DataFrame"):
-    del df_comp["spx"]
-    del df_comp["dax"]
-    del df_comp["ftse"]
-    del df_comp["nikkei"]
-    size = int(len(df_comp) * 0.8)
-    df, df_test = df_comp.iloc[:size].copy(), df_comp.iloc[size:].copy()
+def _(df_spx: "pd.DataFrame"):
+    # Generate test train split
+    size: int = int(len(df_spx) * 0.8)
+    df, df_test = df_spx.iloc[:size].copy(), df_spx.iloc[size:].copy()
     return (df,)
 
 
