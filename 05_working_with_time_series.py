@@ -12,6 +12,8 @@ def _(mo):
 
 @app.cell
 def _():
+    from pathlib import Path
+
     import marimo as mo
     import matplotlib.pyplot as plt
     import numpy as np
@@ -21,7 +23,7 @@ def _():
     import statsmodels.tsa.stattools as sts
 
     from statsmodels.tsa.seasonal import seasonal_decompose
-    return mo, np, pd, plt, seasonal_decompose, sgt, sns, sts
+    return Path, mo, np, pd, plt, seasonal_decompose, sgt, sns, sts
 
 
 @app.cell
@@ -37,17 +39,17 @@ def _(mo):
 
 
 @app.cell
-def _(mo, pd):
+def _(Path, mo, pd):
     @mo.cache
-    def load_data(file_path: str) -> pd.DataFrame:
+    def load_data(file_path: Path) -> pd.DataFrame:
         print("Reading from disk")
         return pd.read_csv(file_path)
     return (load_data,)
 
 
 @app.cell
-def _(load_data, pd):
-    csv_file: str = "Index2018.csv"
+def _(Path, load_data, pd):
+    csv_file: Path = Path.cwd().joinpath("Index2018.csv")
     raw_csv_data: pd.DataFrame = load_data(csv_file)
     return (raw_csv_data,)
 
