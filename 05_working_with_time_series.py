@@ -56,14 +56,29 @@ def _(Path, load_data, pd):
 
 @app.cell
 def _(pd):
+    def set_date_index_frequency(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Set date todatetime index.
+        Set frequency to business days
+        """
+
+        data_out: pd.DataFrame = data.copy()
+        data_out["date"] = pd.to_datetime(data_out["date"], dayfirst=True)
+        data_out = data_out.set_index("date")
+        data_out = data_out.asfreq("b")
+
+        return data_out
+    return (set_date_index_frequency,)
+
+
+@app.cell
+def _(pd, set_date_index_frequency):
     def clean_dataset(data: pd.DataFrame) -> pd.DataFrame:
         """Clean the provided dataset."""
         df_cleaned: pd.DataFrame = data.copy()
 
         # Set date as index with frequency as business days.
-        df_cleaned.date = pd.to_datetime(df_cleaned.date, dayfirst=True)
-        df_cleaned.set_index("date", inplace=True)
-        df_cleaned = df_cleaned.asfreq("b")
+        df_cleaned = set_date_index_frequency(data=df_cleaned)
 
         # Forward fill missing values
         df_cleaned = df_cleaned.ffill()
@@ -118,7 +133,7 @@ def _(df_spx: "pd.DataFrame"):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### White Noise""")
+    mo.md(r"""## White Noise""")
     return
 
 
@@ -221,7 +236,7 @@ def _(df, df_white_noise: "pd.DataFrame", plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Random Walk""")
+    mo.md(r"""## Random Walk""")
     return
 
 
@@ -237,17 +252,17 @@ def _(mo):
 
 
 @app.cell
-def _(pd):
-    random_walk = pd.read_csv("RandWalk.csv")
-    random_walk["date"] = pd.to_datetime(random_walk["date"], dayfirst=True)
-    random_walk = random_walk.set_index("date")
-    random_walk = random_walk.asfreq("b")
+def _(Path, load_data, pd, set_date_index_frequency):
+    random_walk_file: Path = Path.cwd().joinpath("RandWalk.csv")
+    random_walk: pd.DataFrame = load_data(random_walk_file)
+
+    random_walk = set_date_index_frequency(data=random_walk)
     random_walk
     return (random_walk,)
 
 
 @app.cell
-def _(random_walk):
+def _(random_walk: "pd.DataFrame"):
     random_walk.describe()
     return
 
@@ -259,7 +274,7 @@ def _(mo):
 
 
 @app.cell
-def _(df, random_walk):
+def _(df, random_walk: "pd.DataFrame"):
     df["random_walk"] = random_walk["price"]
     df.head()
     return
@@ -439,7 +454,9 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.""")
+    mo.md(
+        r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices."""
+    )
     return
 
 
