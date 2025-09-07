@@ -193,13 +193,19 @@ def _(mo):
 
 
 @app.cell
-def _(df_white_noise: "pd.DataFrame", plt):
+def _(df_white_noise: "pd.DataFrame", mo, plt):
     plt.figure(figsize=(20, 5))
     df_white_noise["white_noise"].plot(label="White Noise")
     plt.title("White Noise", size=24)
-    y_limits = plt.ylim()  # Needs to be called before plt.show()
-    plt.show()
+    y_limits = plt.ylim()  # Needs to be called before plt.show() or plt.gca()
+    mo.as_html(plt.gcf())
     return (y_limits,)
+
+
+@app.cell
+def _(plt):
+    plt.close()
+    return
 
 
 @app.cell(hide_code=True)
@@ -209,12 +215,18 @@ def _(mo):
 
 
 @app.cell
-def _(df_white_noise: "pd.DataFrame", plt, y_limits):
+def _(df_white_noise: "pd.DataFrame", mo, plt, y_limits):
     plt.figure(figsize=(20, 5))
     df_white_noise["market_value"].plot(label="S&P500")
     plt.title("S&P500", size=24)
     plt.ylim(y_limits)  # Use the same y limits as the white noise graph
-    plt.show()
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -225,12 +237,18 @@ def _(mo):
 
 
 @app.cell
-def _(df, df_white_noise: "pd.DataFrame", plt):
+def _(df, df_white_noise: "pd.DataFrame", mo, plt):
     plt.figure(figsize=(20, 5))
     df_white_noise["white_noise"].plot(label="White Noise")
     df["market_value"].plot(label="S&P00")
-    plt.title("White Noise", size=24)
-    plt.show()
+    plt.title("White Noise vs S&P500", size=24)
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -275,25 +293,33 @@ def _(mo, random_walk: "pd.DataFrame"):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""Add the random walk data to `df` as a new column.""")
+    mo.md(r"""Add the random walk data to `df_white_noise` as a new column. Assign to `df_combined`.""")
     return
 
 
 @app.cell
-def _(df, random_walk: "pd.DataFrame"):
-    df["random_walk"] = random_walk["price"]
-    df.head()
-    return
+def _(df_white_noise: "pd.DataFrame", random_walk: "pd.DataFrame"):
+    df_combined = df_white_noise.copy()
+    df_combined["random_walk"] = random_walk["price"]
+    df_combined.head()
+    return (df_combined,)
 
 
 @app.cell
-def _(df, plt):
-    plt.figure(figsize=(20, 5))
-    df["market_value"].plot(label="S&P500")
-    df["random_walk"].plot(label="Random Walk")
-    plt.title("S&P500 vs Random Walk", size=24)
-    plt.legend()
-    plt.show()
+def _(df_combined, mo, plt):
+    # Use a more object oriented plotting interface
+    fig, ax = plt.subplots(figsize=(20, 5))
+    df_combined["market_value"].plot(ax=ax, label="S&P500")
+    df_combined["random_walk"].plot(ax=ax, label="Random Walk")
+    ax.set_title("S&P500 vs Random Walk", size=24)
+    ax.legend()
+    mo.as_html(fig)
+    return (fig,)
+
+
+@app.cell
+def _(fig, plt):
+    plt.close(fig)
     return
 
 
@@ -427,10 +453,10 @@ def _(mo):
 
 
 @app.cell
-def _(df, plt, seasonal_decompose):
+def _(df, mo, plt, seasonal_decompose):
     s_dec = seasonal_decompose(df["market_value"], model="additive")
     s_dec.plot()
-    plt.show()
+    mo.as_html(plt.gcf())
     return
 
 
@@ -460,9 +486,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices."""
-    )
+    mo.md(r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.""")
     return
 
 
@@ -491,12 +515,12 @@ def _(mo):
 
 
 @app.cell
-def _(df, plt, sgt):
+def _(df, mo, plt, sgt):
     sgt.plot_acf(df["market_value"], lags=40, zero=False)
     plt.title("ACF: S&P500", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
-    plt.show()
+    mo.as_html(plt.gcf())
     return
 
 
@@ -521,12 +545,12 @@ def _(mo):
 
 
 @app.cell
-def _(df, plt, sgt):
+def _(df, mo, plt, sgt):
     sgt.plot_acf(df["white_noise"], lags=40, zero=False, auto_ylims=True)
     plt.title("ACF: White Noise", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
-    plt.show()
+    mo.as_html(plt.gcf())
     return
 
 
@@ -548,12 +572,12 @@ def _(mo):
 
 
 @app.cell
-def _(df, plt, sgt):
+def _(df, mo, plt, sgt):
     sgt.plot_acf(df["random_walk"], lags=40, zero=False, auto_ylims=False)
     plt.title("ACF: Random Walk", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
-    plt.show()
+    mo.as_html(plt.gcf())
     return
 
 
@@ -576,14 +600,14 @@ def _(mo):
 
 
 @app.cell
-def _(df, plt, sgt):
+def _(df, mo, plt, sgt):
     sgt.plot_pacf(
         df["market_value"], lags=40, zero=False, method="ols", auto_ylims=True
     )
     plt.title("PACF: S&P500", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
-    plt.show()
+    mo.as_html(plt.gcf())
     return
 
 
@@ -607,14 +631,14 @@ def _(mo):
 
 
 @app.cell
-def _(df, plt, sgt):
+def _(df, mo, plt, sgt):
     sgt.plot_pacf(
         df["white_noise"], lags=40, zero=False, method="ols", auto_ylims=True
     )
     plt.title("PACF: White Noise", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
-    plt.show()
+    mo.as_html(plt.gcf())
     return
 
 
@@ -636,14 +660,14 @@ def _(mo):
 
 
 @app.cell
-def _(df, plt, sgt):
+def _(df, mo, plt, sgt):
     sgt.plot_pacf(
         df["random_walk"], lags=40, zero=False, method="ols", auto_ylims=True
     )
     plt.title("PACF: Random Walk", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
-    plt.show()
+    mo.as_html(plt.gcf())
     return
 
 
