@@ -102,6 +102,12 @@ def _(df_comp: "pd.DataFrame", pd, simplify_dataset):
     return (df_spx,)
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## Generate test:train split""")
+    return
+
+
 @app.cell
 def _(df_spx: "pd.DataFrame"):
     # Generate test train split
@@ -128,25 +134,40 @@ def _(mo):
 
 
 @app.cell
-def _(df, np):
-    df.loc[:, "white_noise"] = np.random.normal(
-        loc=df["market_value"].mean(), scale=df["market_value"].std(), size=len(df)
-    )
-    df.describe()
-    return
+def _(np, pd):
+    def add_white_noise(data: pd.DataFrame) -> pd.DataFrame:
+        """Add a white noise column to the input data"""
+        data_out = data.copy()
+
+        # Generate random normally distributed data
+        # with mean and std comparable to source data
+        data_out.loc[:, "white_noise"] = np.random.normal(
+            loc=data_out["market_value"].mean(),
+            scale=data_out["market_value"].std(),
+            size=len(data_out),
+        )
+
+        return data_out
+    return (add_white_noise,)
 
 
 @app.cell
-def _(df):
-    df.head()
-    return
+def _(add_white_noise, df, mo, pd):
+    df_white_noise: pd.DataFrame = add_white_noise(df)
+
+    mo.vstack(
+        [
+            mo.md("DataFrame description"),
+            df_white_noise.describe(),
+            df_white_noise.head(),
+        ]
+    )
+    return (df_white_noise,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx."""
-    )
+    mo.md(r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx.""")
     return
 
 
@@ -157,9 +178,9 @@ def _(mo):
 
 
 @app.cell
-def _(df, plt):
+def _(df_white_noise: "pd.DataFrame", plt):
     plt.figure(figsize=(20, 5))
-    df["white_noise"].plot(label="White Noise")
+    df_white_noise["white_noise"].plot(label="White Noise")
     plt.title("White Noise", size=24)
     y_limits = plt.ylim()  # Needs to be called before plt.show()
     plt.show()
@@ -168,26 +189,30 @@ def _(df, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph."""
-    )
+    mo.md(r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph.""")
     return
 
 
 @app.cell
-def _(df, plt, y_limits):
+def _(df_white_noise: "pd.DataFrame", plt, y_limits):
     plt.figure(figsize=(20, 5))
-    df["market_value"].plot(label="S&P500")
+    df_white_noise["market_value"].plot(label="S&P500")
     plt.title("S&P500", size=24)
     plt.ylim(y_limits)  # Use the same y limits as the white noise graph
     plt.show()
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""Plot both graphs together.""")
+    return
+
+
 @app.cell
-def _(df, plt):
+def _(df, df_white_noise: "pd.DataFrame", plt):
     plt.figure(figsize=(20, 5))
-    df["white_noise"].plot(label="White Noise")
+    df_white_noise["white_noise"].plot(label="White Noise")
     df["market_value"].plot(label="S&P00")
     plt.title("White Noise", size=24)
     plt.show()
@@ -414,9 +439,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices."""
-    )
+    mo.md(r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.""")
     return
 
 
