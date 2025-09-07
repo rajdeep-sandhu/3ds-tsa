@@ -253,17 +253,23 @@ def _(mo):
 
 @app.cell
 def _(Path, load_data, pd, set_date_index_frequency):
+    # Load random walk data
     random_walk_file: Path = Path.cwd().joinpath("RandWalk.csv")
     random_walk: pd.DataFrame = load_data(random_walk_file)
 
+    # Set index to datetime with business day frequency
     random_walk = set_date_index_frequency(data=random_walk)
-    random_walk
     return (random_walk,)
 
 
 @app.cell
-def _(random_walk: "pd.DataFrame"):
-    random_walk.describe()
+def _(mo, random_walk: "pd.DataFrame"):
+    mo.hstack(
+        [
+            mo.vstack([mo.md("Dataframe"), random_walk.head()]),
+            mo.vstack([mo.md("Dataframe description"), random_walk.describe()]),
+        ],
+    )
     return
 
 
