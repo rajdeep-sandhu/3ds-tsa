@@ -325,41 +325,34 @@ def _(fig, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""Both show cyclical changes and have variations over time.""")
+    mo.md(r"""Both **S&P500** and **Random Walk** show cyclical changes and have variations over time.""")
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""## Stationarity""")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Stationarity""")
-    return
-
-
-@app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""#### S&P500""")
+    mo.md(r"""### S&P500""")
     return
 
 
 @app.function
-def print_dickey_fuller(result):
-    print(f"t-statistic: {result[0]}")
-    print(f"p-value: {result[1]}")
-    print(f"lags used in regression: {result[2]}")
-    print(f"No. of observations used in the analysis: {result[3]}")
-    print(f"Augmented Dickey-Fuller critical values: {result[4]}")
+def adf_result_dict(adf_result: tuple) -> dict:
+    """Return dictionary from tuple with ADF result."""
+    result_keys = ["t_stat", "p-value", "n_lags", "n_obs", "adf_critical_values"]
+    result_dict = dict(zip(result_keys, adf_result))
+    return result_dict
 
 
 @app.cell
-def _(df, sts):
-    result = sts.adfuller(df["market_value"])
-    result
-    return (result,)
-
-
-@app.cell
-def _(result):
-    print_dickey_fuller(result)
+def _(df_combined, sts):
+    adf_result_spx: tuple = sts.adfuller(df_combined["market_value"])
+    adf_result_dict(adf_result_spx)
     return
 
 
@@ -390,7 +383,7 @@ def _(df, sts):
 
 
 @app.cell
-def _(result_1):
+def _(print_dickey_fuller, result_1):
     print_dickey_fuller(result_1)
     return
 
@@ -421,7 +414,7 @@ def _(df, sts):
 
 
 @app.cell
-def _(result_2):
+def _(print_dickey_fuller, result_2):
     print_dickey_fuller(result_2)
     return
 
