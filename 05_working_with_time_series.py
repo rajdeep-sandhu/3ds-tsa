@@ -182,7 +182,9 @@ def _(add_white_noise, df, mo, pd):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx.""")
+    mo.md(
+        r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx."""
+    )
     return
 
 
@@ -210,7 +212,9 @@ def _(plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph.""")
+    mo.md(
+        r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph."""
+    )
     return
 
 
@@ -293,7 +297,9 @@ def _(mo, random_walk: "pd.DataFrame"):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""Add the random walk data to `df_white_noise` as a new column. Assign to `df_combined`.""")
+    mo.md(
+        r"""Add the random walk data to `df_white_noise` as a new column. Assign to `df_combined`."""
+    )
     return
 
 
@@ -325,7 +331,9 @@ def _(fig, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""Both **S&P500** and **Random Walk** show cyclical changes and have variations over time.""")
+    mo.md(
+        r"""Both **S&P500** and **Random Walk** show cyclical changes and have variations over time."""
+    )
     return
 
 
@@ -341,18 +349,31 @@ def _(mo):
     return
 
 
-@app.function
-def adf_result_dict(adf_result: tuple) -> dict:
-    """Return dictionary from tuple with ADF result."""
-    result_keys = ["t_stat", "p-value", "n_lags", "n_obs", "adf_critical_values"]
-    result_dict = dict(zip(result_keys, adf_result))
-    return result_dict
+@app.cell
+def _(pd, sts):
+    def get_adf_result(
+        data, as_series: bool = False, **kwargs
+    ) -> dict | pd.Series:
+        """Return dictionary or Pandas Series from tuple with ADF result."""
+        result: tuple = sts.adfuller(data, **kwargs)
+        result_keys = [
+            "adfstat",
+            "pvalue",
+            "usedlag",
+            "nobs",
+            "critvalues",
+            "icbest",
+        ]
+        result_dict = dict(zip(result_keys, result))
+
+        return pd.Series(result_dict) if as_series else result_dict
+    return (get_adf_result,)
 
 
 @app.cell
-def _(df_combined, sts):
-    adf_result_spx: tuple = sts.adfuller(df_combined["market_value"])
-    adf_result_dict(adf_result_spx)
+def _(df_combined, get_adf_result):
+    adf_result_spx = get_adf_result(df_combined["market_value"], as_series=False)
+    adf_result_spx
     return
 
 
@@ -479,7 +500,9 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.""")
+    mo.md(
+        r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices."""
+    )
     return
 
 
