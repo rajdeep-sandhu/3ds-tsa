@@ -478,13 +478,24 @@ def _(adf_result_random_walk, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Seasonality""")
+    mo.md(r"""## Seasonality""")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### Additive Decomposition""")
+    mo.md(r"""### Types of Seasonal Decomposition""")
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    #### Additive Decomposition
+    Suitable when seasonal fluctuations are constant regardless of the trend.
+    """
+    )
     return
 
 
@@ -516,15 +527,18 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### Multiplicative Decomposition""")
+    mo.md(
+        r"""
+    #### Multiplicative Decomposition
+    Suitable when seasonal fluctuations are proportional to the trend.
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices."""
-    )
+    mo.md(r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.""")
     return
 
 
