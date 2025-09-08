@@ -337,15 +337,9 @@ def _(mo):
     return
 
 
-@app.cell
-def _(mo):
-    mo.md(r"""## Stationarity""")
-    return
-
-
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### S&P500""")
+    mo.md(r"""## Stationarity""")
     return
 
 
@@ -400,21 +394,27 @@ def _(pd, sts):
     return (get_adf_result,)
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""### S&P500""")
+    return
+
+
 @app.cell
 def _(df_combined, get_adf_result):
     adf_result_spx = get_adf_result(df_combined["market_value"], as_series=True)
     adf_result_spx
-    return
+    return (adf_result_spx,)
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _(adf_result_spx, mo):
     mo.md(
-        r"""
-    - The t-statistic (-1.73698) is greater than any of the critical values, which means that the null hypothesis that the data is non-stationary cannot be rejected.
-    - The p-value (0.41) indicates a 41% chance of not rejecting the null hypothesis, which means that it cannot be confirmed that the data is stationary.
+        f"""
+    - The t-statistic ({adf_result_spx.adfstat.round(5)}) is greater than any of the critical values, which means that the null hypothesis that the data is non-stationary cannot be rejected.
+    - The p-value ({adf_result_spx.pvalue.round(3)}) indicates a 41% chance of not rejecting the null hypothesis, which means that it cannot be confirmed that the data is stationary.
     - Therefore there is no evidence of stationarity.
-    - The number of lags used in the regression when determining the t-statistic indicates autocorrelation going back 18 periods. This needs to be taken into account when picking the appropriate model.
+    - The number of lags used in the regression when determining the t-statistic indicates autocorrelation going back {adf_result_spx.usedlag} periods. This needs to be taken into account when picking the appropriate model.
     """
     )
     return
