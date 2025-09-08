@@ -367,6 +367,8 @@ def _(pd, sts):
 
         Returns:
             dict or pandas.Series with ADF test results.
+            When store=True or regresults=True,
+            results_store will contain a ResultsStore object, otherwise None.
         """
 
         results_store_flag: bool = kwargs.get("store", False) or kwargs.get(
@@ -375,14 +377,23 @@ def _(pd, sts):
 
         result: tuple = sts.adfuller(data, **kwargs)
 
+        if results_store_flag:
+            adfstat, pvalue, critvalues, results_store = result
+            usedlag = results_store.usedlag
+            nobs = results_store.nobs
+            icbest = results_store.icbest
+        else:
+            adfstat, pvalue, usedlag, nobs, critvalues, icbest = result
+            results_store = None
+
         result_dict: dict = {
-            "adfstat": result[0],
-            "pvalue": result[1],
-            "usedlag": result[3].usedlag if results_store_flag else result[2],
-            "nobs": result[3].nobs if results_store_flag else result[3],
-            "critvalues": result[2] if results_store_flag else result[4],
-            "icbest": result[3].icbest if results_store_flag else result[5],
-            "results_store": result[3] if results_store_flag else None,
+            "adfstat": adfstat,
+            "pvalue": pvalue,
+            "usedlag": usedlag,
+            "nobs": nobs,
+            "critvalues": critvalues,
+            "icbest": icbest,
+            "results_store": results_store,
         }
 
         return pd.Series(result_dict) if as_series else result_dict
@@ -391,14 +402,8 @@ def _(pd, sts):
 
 @app.cell
 def _(df_combined, get_adf_result):
-    adf_result_spx = get_adf_result(df_combined["market_value"], as_series=True,)
+    adf_result_spx = get_adf_result(df_combined["market_value"], as_series=True)
     adf_result_spx
-    return
-
-
-@app.cell
-def _(df_combined, sts):
-    sts.adfuller(df_combined["market_value"], store=True, regresults=True)
     return
 
 
