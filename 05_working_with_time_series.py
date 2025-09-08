@@ -500,10 +500,18 @@ def _(mo):
 
 
 @app.cell
-def _(df, mo, plt, seasonal_decompose):
-    s_dec = seasonal_decompose(df["market_value"], model="additive")
-    s_dec.plot()
+def _(df_combined, mo, plt, seasonal_decompose):
+    seasonal_dec_add = seasonal_decompose(
+        df_combined["market_value"], model="additive"
+    )
+    seasonal_dec_add.plot()
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -511,13 +519,15 @@ def _(df, mo, plt, seasonal_decompose):
 def _(mo):
     mo.md(
         r"""
-    - Trend
-      - The trend closely resembles the observed series, as the decomposition function uses the previous period values as the trendsetter.
-      - We have already determined that the current period's prices are the best predictor for the next period's prices. If seasonal patterns are observed, we will have other prices as better predictors, e.g. if prices are consistently higher at the beginning of the month compared to the end, it would be better to use values from around 30 periods ago than 1 period ago.
-    - Seasonal
-      - This appears as a rectangle as the values are constantly oscillating between -0.2 and 0.1, and the figure size is too small. Therefore, there is no concrete cyclical pattern evident using naiive decomposition.
-      - Residual
-        - The residuals vary greatly around 2000 and 2008, which can be explained by the instability caused by the dotcom and the housing prices bubbles respectively.
+    ##### Trend
+    - The trend closely resembles the observed series, as the decomposition function uses the previous period values as the trendsetter.
+    - We have already determined that the current period's prices are the best predictor for the next period's prices. If seasonal patterns are observed, we will have other prices as better predictors, e.g. if prices are consistently higher at the beginning of the month compared to the end, it would be better to use values from around 30 periods ago than 1 period ago.
+
+    ##### Seasonal
+    - This appears as a rectangle as the values are constantly oscillating between -0.2 and 0.1, and the figure size is too small. Therefore, there is no concrete cyclical pattern evident using naiive decomposition.
+
+    ##### Residual
+    - The residuals vary greatly around 2000 and 2008, which can be explained by the instability caused by the dotcom and the housing prices bubbles respectively.
 
     Overall, the results of the additive decomposition suggest no seasonality in the data.
     """
@@ -536,9 +546,27 @@ def _(mo):
     return
 
 
+@app.cell
+def _(df_combined, mo, plt, seasonal_decompose):
+    seasonal_dec_mult = seasonal_decompose(
+        df_combined["market_value"], model="multiplicative"
+    )
+    seasonal_dec_mult.plot()
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.""")
+    mo.md(
+        r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices."""
+    )
     return
 
 
