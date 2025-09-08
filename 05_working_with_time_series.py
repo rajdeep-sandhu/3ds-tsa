@@ -411,8 +411,8 @@ def _(df_combined, get_adf_result):
 def _(adf_result_spx, mo):
     mo.md(
         f"""
-    - The t-statistic ({adf_result_spx.adfstat.round(5)}) is greater than any of the critical values, which means that the null hypothesis that the data is non-stationary cannot be rejected.
-    - The p-value ({adf_result_spx.pvalue.round(3)}) indicates a 41% chance of not rejecting the null hypothesis, which means that it cannot be confirmed that the data is stationary.
+    - The t-statistic ({round(adf_result_spx.adfstat, 5)}) is greater than any of the critical values, which means that the null hypothesis that the data is non-stationary cannot be rejected.
+    - The p-value ({round(adf_result_spx.pvalue, 3)}) indicates a 41% chance of not rejecting the null hypothesis, which means that it cannot be confirmed that the data is stationary.
     - Therefore there is no evidence of stationarity.
     - The number of lags used in the regression when determining the t-statistic indicates autocorrelation going back {adf_result_spx.usedlag} periods. This needs to be taken into account when picking the appropriate model.
     """
@@ -422,30 +422,26 @@ def _(adf_result_spx, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### White Noise""")
+    mo.md(r"""### White Noise""")
     return
 
 
 @app.cell
-def _(df, sts):
-    result_1 = sts.adfuller(df["white_noise"])
-    result_1
-    return (result_1,)
-
-
-@app.cell
-def _(print_dickey_fuller, result_1):
-    print_dickey_fuller(result_1)
-    return
+def _(df_combined, get_adf_result):
+    adf_result_white_noise = get_adf_result(
+        df_combined["white_noise"], as_series=True
+    )
+    adf_result_white_noise
+    return (adf_result_white_noise,)
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _(adf_result_white_noise, mo):
     mo.md(
-        r"""
-    - The t-statistic is smaller than all the critical values.
-    - The p-value is 0.
-    - There are no lags. (NB As white noise is stochastic, the number of lags may sometimes vary slightly.)
+        f"""
+    - The t-statistic ({round(adf_result_white_noise.adfstat, 5)}) is smaller than all the critical values.
+    - The p-value is {round(adf_result_white_noise.pvalue, 3)}.
+    - There are no lags ({adf_result_white_noise.usedlag}). (NB As white noise is stochastic, the number of lags may sometimes vary slightly.)
     """
     )
     return
