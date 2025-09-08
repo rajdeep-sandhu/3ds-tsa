@@ -354,17 +354,36 @@ def _(pd, sts):
     def get_adf_result(
         data, as_series: bool = False, **kwargs
     ) -> dict | pd.Series:
-        """Return dictionary or Pandas Series from tuple with ADF result."""
+        """
+        Wrapper for the Augmented Dickey-Fuller test.
+        Returns results as dict or pandas.Series.
+
+        Args:
+            x (array-like): Time series data to test for unit root (stationarity).
+            as_series (bool, optional): If True, return results as a
+                pandas.Series with labeled indices. If False, return a plain dict.
+            **kwargs: Additional arguments passed to
+                `statsmodels.tsa.stattools.adfuller`
+
+        Returns:
+            dict or pandas.Series with ADF test results.
+        """
+
+        results_store_flag: bool = kwargs.get("store", False) or kwargs.get(
+            "regresults", False
+        )
+
         result: tuple = sts.adfuller(data, **kwargs)
-        result_keys = [
-            "adfstat",
-            "pvalue",
-            "usedlag",
-            "nobs",
-            "critvalues",
-            "icbest",
-        ]
-        result_dict = dict(zip(result_keys, result))
+
+        result_dict: dict = {
+            "adfstat": result[0],
+            "pvalue": result[1],
+            "usedlag": result[3].usedlag if results_store_flag else result[2],
+            "nobs": result[3].nobs if results_store_flag else result[3],
+            "critvalues": result[2] if results_store_flag else result[4],
+            "icbest": result[3].icbest if results_store_flag else result[5],
+            "results_store": result[3] if results_store_flag else None,
+        }
 
         return pd.Series(result_dict) if as_series else result_dict
     return (get_adf_result,)
@@ -372,8 +391,14 @@ def _(pd, sts):
 
 @app.cell
 def _(df_combined, get_adf_result):
-    adf_result_spx = get_adf_result(df_combined["market_value"], as_series=False)
+    adf_result_spx = get_adf_result(df_combined["market_value"], as_series=True,)
     adf_result_spx
+    return
+
+
+@app.cell
+def _(df_combined, sts):
+    sts.adfuller(df_combined["market_value"], store=True, regresults=True)
     return
 
 
