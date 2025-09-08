@@ -449,29 +449,25 @@ def _(adf_result_white_noise, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### Random Walk""")
+    mo.md(r"""### Random Walk""")
     return
 
 
 @app.cell
-def _(df, sts):
-    result_2 = sts.adfuller(df["random_walk"])
-    result_2
-    return (result_2,)
-
-
-@app.cell
-def _(print_dickey_fuller, result_2):
-    print_dickey_fuller(result_2)
-    return
+def _(df_combined, get_adf_result):
+    adf_result_random_walk = get_adf_result(
+        df_combined["random_walk"], as_series=True
+    )
+    adf_result_random_walk
+    return (adf_result_random_walk,)
 
 
 @app.cell(hide_code=True)
-def _(mo):
+def _(adf_result_random_walk, mo):
     mo.md(
-        r"""
-    - The p-value is 0.61, indicating a 61% chance that the data comes from a non-stationary process.
-    - The t-statistic is more than any of the critical values.
+        f"""
+    - The p-value is {round(adf_result_random_walk.pvalue, 3)}, indicating a 61% chance that the data comes from a non-stationary process.
+    - The t-statistic ({round(adf_result_random_walk.adfstat, 5)}) is more than any of the critical values.
     - This indicates insufficient evidence that the data is stationary.
     - More often than not, random walk intervals of the same size differ significantly due to the uncertainty of the process. So, each days price might go up or down, but the starting position is always different.
     - Chance dictates that there will be intervals of alternating ups and downs and those with constant runs of increase or decrease. The covariances of two such intervalswith identical size will very rarely be equal. Unlike white noise, these are expected to be a non-stationary process.
