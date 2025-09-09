@@ -623,12 +623,30 @@ def _(df_combined, mo, plt, resid_add, resid_mult):
     plt.legend()
     plt.title("Relative residuals: Additive vs Multiplicative decomposition")
     mo.as_html(plt.gcf())
-    return
+    return (resid_add_relative,)
 
 
 @app.cell
 def _(plt):
     plt.close()
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(
+        r"""
+    ##### Correlation between additive relative residuals and multiplicative residuals
+    - Both are highly correlated.
+    - Uncentred series can be compared, as correlation does not depend on centring.
+    """
+    )
+    return
+
+
+@app.cell
+def _(np, resid_add_relative, resid_mult):
+    np.corrcoef(resid_add_relative.dropna(), resid_mult.dropna())
     return
 
 
