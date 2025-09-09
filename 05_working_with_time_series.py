@@ -506,13 +506,20 @@ def _(df_combined, mo, plt, seasonal_decompose):
     )
     seasonal_dec_add.plot()
     mo.as_html(plt.gcf())
-    return
+    return (seasonal_dec_add,)
 
 
 @app.cell
 def _(plt):
     plt.close()
     return
+
+
+@app.cell
+def _(seasonal_dec_add):
+    resid_add = seasonal_dec_add.resid
+    resid_add.describe()
+    return (resid_add,)
 
 
 @app.cell(hide_code=True)
@@ -527,7 +534,9 @@ def _(mo):
     - This appears as a rectangle as the values are constantly oscillating between -0.2 and 0.1, and the figure size is too small. Therefore, there is no concrete cyclical pattern evident using naiive decomposition.
 
     ##### Residual
+    - The residuals represent absolute error in price terms.
     - The residuals vary greatly around 2000 and 2008, which can be explained by the instability caused by the dotcom and the housing prices bubbles respectively.
+    - The residuals are relatively small ($\mu=0.0002134392, \sigma=8.486989784$) compared to the `spx` observations. The mean is close to 0, as expected for additive residuals. This indicates that the decomposition did not systematically under or over-estimate.
 
     Overall, the results of the additive decomposition suggest no seasonality in the data.
     """
@@ -553,7 +562,7 @@ def _(df_combined, mo, plt, seasonal_decompose):
     )
     seasonal_dec_mult.plot()
     mo.as_html(plt.gcf())
-    return
+    return (seasonal_dec_mult,)
 
 
 @app.cell
@@ -562,11 +571,64 @@ def _(plt):
     return
 
 
+@app.cell
+def _(seasonal_dec_mult):
+    resid_mult = seasonal_dec_mult.resid
+    resid_mult.describe()
+    return (resid_mult,)
+
+
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(
-        r"""The results are very similar, which provides further proof that there is no seasonality within S&P500 prices."""
+        r"""
+    - Multiplicative residuals show relative deviations. 
+    - The multiplicative residuals are a ratio, in this case, close to 1 ($\mu=0.9999766432, \sigma=0.0077462768$), which indicates little multiplicative error. The decomposition has therefore captured the proportional structure well. The small spread indicates no meaningful seasonality in the data.
+    - The multiplicative residuals show crises as percentage shocks (-8% to 6%), which is a more natural way to express financial volatility. This indicates suden volatility not captured by the decomposition.
+    - - The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.
+    """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    #### Comparison between additive and multiplicative decomposition.
+    - The additive decomposition residuals are converted to a ratio relative to the underlying market value.
+    - Both the relative additive residuals and the multiplicative residuals are centred by subtracting their means from each datapoint to allow comparison.
+    - Both look very similar, indicating no strong seasonality, only shocks.
+    """
+    )
+    return
+
+
+@app.cell
+def _(df_combined, mo, plt, resid_add, resid_mult):
+    resid_add_relative = resid_add / df_combined["market_value"]
+
+    plt.figure(figsize=(20, 5))
+    plt.plot(
+        resid_add_relative - resid_add_relative.mean(),
+        label="Additive Residuals (Relative, Centred)",
+        alpha=0.7,
+    )
+    plt.plot(
+        resid_mult - resid_mult.mean(),
+        label="Multiplicative Residuals (Centred)",
+        alpha=0.7,
+    )
+    plt.axhline(0, color="black", linewidth=1, linestyle="--")
+    plt.legend()
+    plt.title("Relative residuals: Additive vs Multiplicative decomposition")
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
