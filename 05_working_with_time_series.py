@@ -607,8 +607,10 @@ def _(mo):
 
 @app.cell
 def _(df_combined, mo, plt, resid_add, resid_mult):
+    # Relative additive residual
     resid_add_relative = resid_add / df_combined["market_value"]
 
+    # Plot centred relative additive residuals and centre multiplicative residuals
     plt.figure(figsize=(20, 5))
     plt.plot(
         resid_add_relative - resid_add_relative.mean(),
@@ -623,6 +625,7 @@ def _(df_combined, mo, plt, resid_add, resid_mult):
     plt.axhline(0, color="black", linewidth=1, linestyle="--")
     plt.legend()
     plt.title("Relative residuals: Additive vs Multiplicative decomposition")
+
     mo.as_html(plt.gcf())
     return (resid_add_relative,)
 
@@ -633,7 +636,7 @@ def _(plt):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
