@@ -10,6 +10,25 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    #### **Description**
+    The aim is to examine the dataset, while also attempting to optimise and refactor code.<br>
+
+    - Load and simplify price data to use only S&P500 prices.
+    - Generate **test:train split**, although this is not used in this notebook.
+    - Generate **white noise** data. Load random walk data. Add to simplified dataset.
+    - Examine **stationarity** for price, white noise and random walk data using the **Augmented Dickey-Fuller test**. Write a wrapper function to return `dict` or `pandas.Series` for results.
+    - Examine **seasonality** of price data using **additive and multiplicative seasonal decomposition**. Compare relative additive residuals with multiplicative residuals.
+    - Examine the **autocorrelation (ACF)** and **partial autocorrelation (PACF)**.
+    - Use **caching** to prevent repeated data loads on reactive notebook reruns.
+    """
+    )
+    return
+
+
 @app.cell
 def _():
     from pathlib import Path
@@ -182,9 +201,7 @@ def _(add_white_noise, df, mo, pd):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx."""
-    )
+    mo.md(r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx.""")
     return
 
 
@@ -212,9 +229,7 @@ def _(plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph."""
-    )
+    mo.md(r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph.""")
     return
 
 
@@ -297,9 +312,7 @@ def _(mo, random_walk: "pd.DataFrame"):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""Add the random walk data to `df_white_noise` as a new column. Assign to `df_combined`."""
-    )
+    mo.md(r"""Add the random walk data to `df_white_noise` as a new column. Assign to `df_combined`.""")
     return
 
 
@@ -331,9 +344,7 @@ def _(fig, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""Both **S&P500** and **Random Walk** show cyclical changes and have variations over time."""
-    )
+    mo.md(r"""Both **S&P500** and **Random Walk** show cyclical changes and have variations over time.""")
     return
 
 
