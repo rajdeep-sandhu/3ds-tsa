@@ -656,7 +656,7 @@ def _(np, resid_add_relative, resid_mult):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### ACF""")
+    mo.md(r"""## ACF""")
     return
 
 
@@ -674,17 +674,23 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### S&P500""")
+    mo.md(r"""### S&P500""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
-    sgt.plot_acf(df["market_value"], lags=40, zero=False)
+def _(df_combined, mo, plt, sgt):
+    sgt.plot_acf(df_combined["market_value"], lags=40, zero=False)
     plt.title("ACF: S&P500", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -704,17 +710,23 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### White Noise""")
+    mo.md(r"""### White Noise""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
-    sgt.plot_acf(df["white_noise"], lags=40, zero=False, auto_ylims=True)
+def _(df_combined, mo, plt, sgt):
+    sgt.plot_acf(df_combined["white_noise"], lags=40, zero=False, auto_ylims=True)
     plt.title("ACF: White Noise", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -731,13 +743,13 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### Random Walk""")
+    mo.md(r"""### Random Walk""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
-    sgt.plot_acf(df["random_walk"], lags=40, zero=False, auto_ylims=False)
+def _(df_combined, mo, plt, sgt):
+    sgt.plot_acf(df_combined["random_walk"], lags=40, zero=False, auto_ylims=False)
     plt.title("ACF: Random Walk", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
@@ -753,7 +765,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### PACF""")
+    mo.md(r"""## PACF""")
     return
 
 
