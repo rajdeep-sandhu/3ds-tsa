@@ -528,7 +528,7 @@ def _(mo):
         r"""
     ##### Trend
     - The trend closely resembles the observed series, as the decomposition function uses the previous period values as the trendsetter.
-    - We have already determined that the current period's prices are the best predictor for the next period's prices. If seasonal patterns are observed, we will have other prices as better predictors, e.g. if prices are consistently higher at the beginning of the month compared to the end, it would be better to use values from around 30 periods ago than 1 period ago.
+    - As already determined, the current period's prices are the best predictor for the next period's prices. If seasonal patterns are observed, we indicates that other prices are better predictors, e.g. if prices are consistently higher at the beginning of the month compared to the end, it would be better to use values from around 30 periods ago than 1 period ago.
 
     ##### Seasonal
     - This appears as a rectangle as the values are constantly oscillating between -0.2 and 0.1, and the figure size is too small. Therefore, there is no concrete cyclical pattern evident using naiive decomposition.
@@ -583,9 +583,10 @@ def _(mo):
     mo.md(
         r"""
     - Multiplicative residuals show relative deviations. 
-    - The multiplicative residuals are a ratio, in this case, close to 1 ($\mu=0.9999766432, \sigma=0.0077462768$), which indicates little multiplicative error. The decomposition has therefore captured the proportional structure well. The small spread indicates no meaningful seasonality in the data.
-    - The multiplicative residuals show crises as percentage shocks (-8% to 6%), which is a more natural way to express financial volatility. This indicates suden volatility not captured by the decomposition.
-    - - The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.
+    - The multiplicative residuals are a ratio, in this case, close to 1 ($\mu=0.9999766432, \sigma=0.0077462768$), which indicates little multiplicative error. The decomposition has therefore captured the proportional structure well.
+    - There seems to be no meaningful seasonality in the data.
+    - The multiplicative residuals show crises as percentage shocks (-8% to 6%), which is a more natural way to express financial volatility. This indicates sudden volatility not captured by the decomposition.
+    - The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.
     """
     )
     return
