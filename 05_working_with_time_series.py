@@ -10,6 +10,25 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    #### **Description**
+    The aim is to examine the dataset, while also attempting to optimise and refactor code.<br>
+
+    - Load and simplify price data to use only S&P500 prices.
+    - Generate **test:train split**, although this is not used in this notebook.
+    - Generate **white noise** data. Load random walk data. Add to simplified dataset.
+    - Examine **stationarity** for price, white noise and random walk data using the **Augmented Dickey-Fuller test**. Write a wrapper function to return `dict` or `pandas.Series` for results.
+    - Examine **seasonality** of price data using **additive and multiplicative seasonal decomposition**. Compare relative additive residuals with multiplicative residuals.
+    - Examine the **autocorrelation (ACF)** and **partial autocorrelation (PACF)**.
+    - Use **caching** to prevent repeated data loads on reactive notebook reruns.
+    """
+    )
+    return
+
+
 @app.cell
 def _():
     from pathlib import Path
@@ -182,9 +201,7 @@ def _(add_white_noise, df, mo, pd):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx."""
-    )
+    mo.md(r"""- Because each value is generated individually, the mean and standard deviation of the generated data are similar but not necessarily the same as spx.""")
     return
 
 
@@ -212,9 +229,7 @@ def _(plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph."""
-    )
+    mo.md(r"""For the graphs to be comparable, set the y-axis limits of the S&P500 graph to be the same as the white noise graph.""")
     return
 
 
@@ -297,9 +312,7 @@ def _(mo, random_walk: "pd.DataFrame"):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""Add the random walk data to `df_white_noise` as a new column. Assign to `df_combined`."""
-    )
+    mo.md(r"""Add the random walk data to `df_white_noise` as a new column. Assign to `df_combined`.""")
     return
 
 
@@ -331,9 +344,7 @@ def _(fig, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""Both **S&P500** and **Random Walk** show cyclical changes and have variations over time."""
-    )
+    mo.md(r"""Both **S&P500** and **Random Walk** show cyclical changes and have variations over time.""")
     return
 
 
@@ -528,7 +539,7 @@ def _(mo):
         r"""
     ##### Trend
     - The trend closely resembles the observed series, as the decomposition function uses the previous period values as the trendsetter.
-    - We have already determined that the current period's prices are the best predictor for the next period's prices. If seasonal patterns are observed, we will have other prices as better predictors, e.g. if prices are consistently higher at the beginning of the month compared to the end, it would be better to use values from around 30 periods ago than 1 period ago.
+    - As already determined, the current period's prices are the best predictor for the next period's prices. If seasonal patterns are observed, we indicates that other prices are better predictors, e.g. if prices are consistently higher at the beginning of the month compared to the end, it would be better to use values from around 30 periods ago than 1 period ago.
 
     ##### Seasonal
     - This appears as a rectangle as the values are constantly oscillating between -0.2 and 0.1, and the figure size is too small. Therefore, there is no concrete cyclical pattern evident using naiive decomposition.
@@ -583,9 +594,10 @@ def _(mo):
     mo.md(
         r"""
     - Multiplicative residuals show relative deviations. 
-    - The multiplicative residuals are a ratio, in this case, close to 1 ($\mu=0.9999766432, \sigma=0.0077462768$), which indicates little multiplicative error. The decomposition has therefore captured the proportional structure well. The small spread indicates no meaningful seasonality in the data.
-    - The multiplicative residuals show crises as percentage shocks (-8% to 6%), which is a more natural way to express financial volatility. This indicates suden volatility not captured by the decomposition.
-    - - The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.
+    - The multiplicative residuals are a ratio, in this case, close to 1 ($\mu=0.9999766432, \sigma=0.0077462768$), which indicates little multiplicative error. The decomposition has therefore captured the proportional structure well.
+    - There seems to be no meaningful seasonality in the data.
+    - The multiplicative residuals show crises as percentage shocks (-8% to 6%), which is a more natural way to express financial volatility. This indicates sudden volatility not captured by the decomposition.
+    - The results are very similar, which provides further proof that there is no seasonality within S&P500 prices.
     """
     )
     return
@@ -606,8 +618,10 @@ def _(mo):
 
 @app.cell
 def _(df_combined, mo, plt, resid_add, resid_mult):
+    # Relative additive residual
     resid_add_relative = resid_add / df_combined["market_value"]
 
+    # Plot centred relative additive residuals and centre multiplicative residuals
     plt.figure(figsize=(20, 5))
     plt.plot(
         resid_add_relative - resid_add_relative.mean(),
@@ -622,6 +636,7 @@ def _(df_combined, mo, plt, resid_add, resid_mult):
     plt.axhline(0, color="black", linewidth=1, linestyle="--")
     plt.legend()
     plt.title("Relative residuals: Additive vs Multiplicative decomposition")
+
     mo.as_html(plt.gcf())
     return (resid_add_relative,)
 
@@ -632,7 +647,7 @@ def _(plt):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
@@ -652,7 +667,7 @@ def _(np, resid_add_relative, resid_mult):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### ACF""")
+    mo.md(r"""## ACF""")
     return
 
 
@@ -670,17 +685,23 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### S&P500""")
+    mo.md(r"""### S&P500""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
-    sgt.plot_acf(df["market_value"], lags=40, zero=False)
+def _(df_combined, mo, plt, sgt):
+    sgt.plot_acf(df_combined["market_value"], lags=40, zero=False)
     plt.title("ACF: S&P500", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -700,17 +721,23 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### White Noise""")
+    mo.md(r"""### White Noise""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
-    sgt.plot_acf(df["white_noise"], lags=40, zero=False, auto_ylims=True)
+def _(df_combined, mo, plt, sgt):
+    sgt.plot_acf(df_combined["white_noise"], lags=40, zero=False, auto_ylims=True)
     plt.title("ACF: White Noise", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -727,13 +754,13 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### Random Walk""")
+    mo.md(r"""### Random Walk""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
-    sgt.plot_acf(df["random_walk"], lags=40, zero=False, auto_ylims=False)
+def _(df_combined, mo, plt, sgt):
+    sgt.plot_acf(df_combined["random_walk"], lags=40, zero=False, auto_ylims=False)
     plt.title("ACF: Random Walk", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
@@ -749,25 +776,35 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### PACF""")
+    mo.md(r"""## PACF""")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### S&P500""")
+    mo.md(r"""### S&P500""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
+def _(df_combined, mo, plt, sgt):
     sgt.plot_pacf(
-        df["market_value"], lags=40, zero=False, method="ols", auto_ylims=True
+        df_combined["market_value"],
+        lags=40,
+        zero=False,
+        method="ols",
+        auto_ylims=True,
     )
     plt.title("PACF: S&P500", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -786,19 +823,25 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### White Noise""")
+    mo.md(r"""### White Noise""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
+def _(df_combined, mo, plt, sgt):
     sgt.plot_pacf(
-        df["white_noise"], lags=40, zero=False, method="ols", auto_ylims=True
+        df_combined["white_noise"], lags=40, zero=False, method="ols", auto_ylims=True
     )
     plt.title("PACF: White Noise", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -815,19 +858,25 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### Random Walk""")
+    mo.md(r"""### Random Walk""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
+def _(df_combined, mo, plt, sgt):
     sgt.plot_pacf(
-        df["random_walk"], lags=40, zero=False, method="ols", auto_ylims=True
+        df_combined["random_walk"], lags=40, zero=False, method="ols", auto_ylims=True
     )
     plt.title("PACF: Random Walk", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
