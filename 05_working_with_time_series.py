@@ -771,19 +771,29 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### S&P500""")
+    mo.md(r"""### S&P500""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
+def _(df_combined, mo, plt, sgt):
     sgt.plot_pacf(
-        df["market_value"], lags=40, zero=False, method="ols", auto_ylims=True
+        df_combined["market_value"],
+        lags=40,
+        zero=False,
+        method="ols",
+        auto_ylims=True,
     )
     plt.title("PACF: S&P500", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -802,19 +812,25 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### White Noise""")
+    mo.md(r"""### White Noise""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
+def _(df_combined, mo, plt, sgt):
     sgt.plot_pacf(
-        df["white_noise"], lags=40, zero=False, method="ols", auto_ylims=True
+        df_combined["white_noise"], lags=40, zero=False, method="ols", auto_ylims=True
     )
     plt.title("PACF: White Noise", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
@@ -831,19 +847,25 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### Random Walk""")
+    mo.md(r"""### Random Walk""")
     return
 
 
 @app.cell
-def _(df, mo, plt, sgt):
+def _(df_combined, mo, plt, sgt):
     sgt.plot_pacf(
-        df["random_walk"], lags=40, zero=False, method="ols", auto_ylims=True
+        df_combined["random_walk"], lags=40, zero=False, method="ols", auto_ylims=True
     )
     plt.title("PACF: Random Walk", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Partial Autocorrelation Coefficient")
     mo.as_html(plt.gcf())
+    return
+
+
+@app.cell
+def _(plt):
+    plt.close()
     return
 
 
