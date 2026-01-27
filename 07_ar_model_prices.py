@@ -124,5 +124,18 @@ def _(df_comp: "pd.DataFrame", pd, simplify_dataset):
     return (df_ftse,)
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## Generate test:train split""")
+    return
+
+
+@app.cell
+def _(df_ftse: "pd.DataFrame"):
+    size = int(len(df_ftse) * 0.8)
+    df, df_test = df_ftse.iloc[:size].copy(), df_ftse.iloc[size:].copy()
+    return (df,)
+
+
 if __name__ == "__main__":
     app.run()
