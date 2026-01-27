@@ -178,5 +178,43 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## The PACF""")
+    return
+
+
+@app.cell
+def _(df, mo, plt, sgt):
+    sgt.plot_pacf(
+        df["market_value"],
+        alpha=0.05,
+        zero=False,
+        lags=40,
+        method="ols",
+        auto_ylims=True,
+    )
+
+    plt.title("PACF: FTSE Prices", size=24)
+    plt.xlabel("Lags")
+    plt.ylabel("Partial Autocorrelation Coefficient")
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - The first lag coefficient is greatly significant and **must** be included in the model.
+    - Coefficients from lag 25 onwards are not significant and can be ignored. Since their values will be very close to 0, their impact on the model will be minimal.
+    - The model should therefore include less than 25 lags.
+    - A business month is 22 days, which means there will be cyclical changes. Values a month ago negatively affect the values today. However, these are overshadowed by more recent lags and their contribution should not be overanalysed.
+    - NB Patterns are not always so convenient to spot.
+    """
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()
