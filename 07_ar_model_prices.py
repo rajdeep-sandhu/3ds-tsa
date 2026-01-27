@@ -137,5 +137,46 @@ def _(df_ftse: "pd.DataFrame"):
     return (df,)
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## The ACF""")
+    return
+
+
+@app.cell
+def _(df, mo, plt, sgt):
+    sgt.plot_acf(df["market_value"], zero=False, lags=40, auto_ylims=True)
+    plt.title("ACF: FTSE Prices", size=24)
+    plt.xlabel("Lags")
+    plt.ylabel("Autocorrelation Coefficient")
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - The coefficients slowly decline with lags.
+    - All are positive.
+    - All are significant.
+    - This is similar to the ACF for the S&P500 conducted previously.
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - A higher number of lags means a more coefficients and a better fit but makes the model prone to overfitting and poor generalisation.
+    - A parsimonious model with fewer lags is better.
+    - An efficient model should only include lags which have a **direct**, **significant** effect on the present value. This is determined using the PACF.
+    """
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()
