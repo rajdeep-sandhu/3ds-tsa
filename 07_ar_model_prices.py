@@ -216,5 +216,82 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## The AR(1) Model""")
+    return
+
+
+@app.cell
+def _(ARIMA, df):
+    model_prices = ARIMA(df["market_value"], order=(1, 0, 0))
+    result_prices = model_prices.fit()
+    result_prices.summary()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - `const` refers to $C$. `coef` is its value.
+    - `ar.L1` refers to `'market_value`. `coef` refers to $\phi_1$, which is the coefficient for the autoregressive value for 1 time period ago ($t-1$).
+      - The coefficient is close to 1, which is similar to what the ACF and PACF graph indicate.
+
+    - As the $P$ values for both are 0.00, both $C$ and $\phi_1$ for market value are significant.
+
+    - As the **critical values** for both do not contain 0, both the coefficients are significant.
+
+    Since both values are significantly different from 0, a more complex model can be tried for greater accuracy.
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## Higher-Lag AR Models""")
+    return
+
+
+@app.cell
+def _(ARIMA, ModelGenerator, df):
+    model_generator_prices = ModelGenerator(data=df["market_value"])
+    max_lags = 9
+    param_grid = [{"order": (p, 0, 0)} for p in range(1, max_lags + 1)]
+    model_generator_prices.generate_models(
+        model_function=ARIMA, model_name_prefix="AR", param_grid=param_grid
+    )
+
+    model_generator_prices.summarise_results()
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    **AR(2)**
+
+    - The coefficients for $C$ and $\phi_1$ have changed. This is because some of the changes contributing to the present value can be attributed to lag 2.
+    - `ar.L2` has been added for lag 2. As the $P$ value for L2 is > 0.05, it indicates that $\phi_2$ is not significantly different from 0. Also, its **critical value** range contains 0.
+    - The log likelihood is slightly higher than that for AR(1).
+
+    **AR(3)**
+
+    - $\phi_2$ is now negative. Its P value is below 0.05, which indicates significance.
+    - The P value of $\phi_3$ is 0, which indicates that it is significant.
+    - The log likelihood is higher than both AR(1) and AR(2)
+
+    **AR(4)**
+
+    - The P value of $\phi_3$ is more than 0.05, which indicates that it is not significant.
+    - The log likelihood is higher than the AR(1) to AR(3) models, which suggests that the model is capturing more variation in the data.
+    - However, the insignificance of $\phi_3$ raises concerns about overfitting.
+    """
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()
