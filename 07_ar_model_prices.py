@@ -415,24 +415,35 @@ def _(mo):
 
 
 @app.cell
-def _(metrics_prices):
+def _(metrics_prices, mo):
     # Calculate degrees of freedom from the maximum lags of each model
+    selected_model = "AR_7_0_0"
+
     deg_freedom_prices = (
-        metrics_prices.evaluation.loc["AR_7_0_0", "ar"]
+        metrics_prices.evaluation.loc[selected_model, "ar"]
         - metrics_prices.evaluation.loc["AR_1_0_0", "ar"]
     )
 
-    metrics_prices.llr_test(
+    # Calculate LLR
+    llr_test_prices_p_val = metrics_prices.llr_test(
         metrics_prices.evaluation.loc["AR_1_0_0", "llf"],
-        metrics_prices.evaluation.loc["AR_7_0_0", "llf"],
+        metrics_prices.evaluation.loc[selected_model, "llf"],
         df=deg_freedom_prices,
     )
-    return
+
+    mo.vstack(
+        [
+            mo.md(f"**Selected Model:** {selected_model}"),
+            mo.md(f"Degrees of freedom = {deg_freedom_prices}"),
+            mo.md(f"LLR Test p-value = {llr_test_prices_p_val}"),
+        ]
+    )
+    return (selected_model,)
 
 
 @app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""The returned p-value indicates that the AR_7 model is significanlty better than the AR_1 model.""")
+def _(mo, selected_model):
+    mo.md(f"""The returned p-value indicates that the **{selected_model} model** is significantly better than the AR_1 model.""")
     return
 
 
@@ -486,7 +497,9 @@ def _(df, sts):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity.""")
+    mo.md(
+        r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity."""
+    )
     return
 
 
@@ -503,7 +516,9 @@ def _(df, mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor.""")
+    mo.md(
+        r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor."""
+    )
     return
 
 
