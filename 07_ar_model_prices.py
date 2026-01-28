@@ -383,7 +383,7 @@ def _(mo):
 @app.cell
 def _(metrics_prices, mo, plt):
     # Create 2 subplots
-    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 8))
+    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
 
     # Plot final lag p-value on the first subplot
     metrics_prices.evaluation[["final_lag_pval", "llr_test_pval"]].plot(ax=axes[0])
