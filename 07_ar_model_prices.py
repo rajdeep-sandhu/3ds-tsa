@@ -36,7 +36,7 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    return ARIMA, MetricsGenerator, ModelGenerator, Path, mo, pd, plt, sgt
+    return ARIMA, MetricsGenerator, ModelGenerator, Path, mo, pd, plt, sgt, sts
 
 
 @app.cell(hide_code=True)
@@ -310,7 +310,9 @@ def _(MetricsGenerator, model_generator_prices):
 @app.cell
 def _(metrics_prices):
     # Find models where both the final lag and the LLR Test p-values fail to reach significance.
-    metrics_prices.evaluation.query("final_lag_pval >= 0.05 and llr_test_pval >= 0.05")
+    metrics_prices.evaluation.query(
+        "final_lag_pval >= 0.05 and llr_test_pval >= 0.05"
+    )
     return
 
 
@@ -372,7 +374,100 @@ def _(metrics_prices):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The returned p-value indicates that the AR_7 model is significanlty better than the AR_1 model.""")
+    mo.md(
+        r"""The returned p-value indicates that the AR_7 model is significanlty better than the AR_1 model."""
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## Analysing the Residuals""")
+    return
+
+
+@app.cell
+def _(df, model_generator_prices):
+    # Get residuals from the AR_7 model result
+    df["residuals_price"] = model_generator_prices.get_model("AR_7_0_0")[1].resid
+    return
+
+
+@app.cell
+def _(df, mo):
+    mo.vstack(
+        [
+            f"Mean: {df['residuals_price'].mean()}",
+            f"Variance: {df['residuals_price'].var()}",
+        ]
+    )
+    return
+
+
+@app.cell
+def _(df, mo):
+    mo.as_html(df["residuals_price"].plot.box())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - The mean is close to 0, which suggests that the model performs well.
+    - However, the high variance indicates that the model might not perform well.
+    """
+    )
+    return
+
+
+@app.cell
+def _(df, sts):
+    # ADF Test
+    sts.adfuller(df["residuals_price"])
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity.""")
+    return
+
+
+@app.cell
+def _(df, mo, plt, sgt):
+    # Plot the ACF for residuals
+    sgt.plot_acf(df["residuals_price"], zero=False, lags=40, auto_ylims=True)
+    plt.title("ACF: FTSE Price Residuals", size=24)
+    plt.xlabel("Lags")
+    plt.ylabel("Autocorrelation Coefficient")
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor.""")
+    return
+
+
+@app.cell
+def _(df, mo, plt):
+    # Plot the residual time series.
+    # The first row is dropped as it is an outlier, which is expected for AR model residuals.
+    df["residuals_price"][1:].plot(figsize=(20, 5))
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - The price residuals are mostly low and the time series does not indicate an obvious pattern, so the choice of model seems correct.
+    - However, since an AR model is being used on non-stationary data, the predictions might still be incorrect.
+    """
+    )
     return
 
 
