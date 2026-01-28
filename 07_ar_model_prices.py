@@ -36,7 +36,7 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    return ARIMA, ModelGenerator, Path, mo, pd, plt, sgt
+    return ARIMA, MetricsGenerator, ModelGenerator, Path, mo, pd, plt, sgt
 
 
 @app.cell(hide_code=True)
@@ -264,7 +264,7 @@ def _(ARIMA, ModelGenerator, df):
     )
 
     model_generator_prices.summarise_results()
-    return
+    return (model_generator_prices,)
 
 
 @app.cell(hide_code=True)
@@ -290,6 +290,32 @@ def _(mo):
     - However, the insignificance of $\phi_3$ raises concerns about overfitting.
     """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""#### Create a dataframe to tabulate measures of interest""")
+    return
+
+
+@app.cell
+def _(MetricsGenerator, model_generator_prices):
+    metrics_prices = MetricsGenerator(models=model_generator_prices.models)
+    metrics_prices.generate_metrics_table()
+    metrics_prices.evaluation
+    return (metrics_prices,)
+
+
+@app.cell
+def _(metrics_prices):
+    # Find models where both the final lag and the LLR Test p-values fail to reach significance.
+    metrics_prices.evaluation.query("final_lag_pval >= 0.05 and llr_test_pval >= 0.05")
+    return
+
+
+@app.cell
+def _():
     return
 
 
