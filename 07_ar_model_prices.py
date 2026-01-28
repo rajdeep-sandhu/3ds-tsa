@@ -456,24 +456,25 @@ def _(mo):
 @app.cell
 def _(df, model_generator_prices):
     # Get residuals from the AR_7 model result
-    df["residuals_price"] = model_generator_prices.get_model("AR_7_0_0")[1].resid
-    return
+    df_resid = df.copy()
+    df_resid["residuals_price"] = model_generator_prices.get_model("AR_7_0_0")[1].resid
+    return (df_resid,)
 
 
 @app.cell
-def _(df, mo):
+def _(df_resid, mo):
     mo.vstack(
         [
-            f"Mean: {df['residuals_price'].mean()}",
-            f"Variance: {df['residuals_price'].var()}",
+            f"Mean: {df_resid['residuals_price'].mean()}",
+            f"Variance: {df_resid['residuals_price'].var()}",
         ]
     )
     return
 
 
 @app.cell
-def _(df, mo):
-    mo.as_html(df["residuals_price"].plot.box())
+def _(df_resid, mo):
+    mo.as_html(df_resid["residuals_price"].plot.box())
     return
 
 
@@ -489,9 +490,9 @@ def _(mo):
 
 
 @app.cell
-def _(df, sts):
+def _(df_resid, sts):
     # ADF Test
-    sts.adfuller(df["residuals_price"])
+    sts.adfuller(df_resid["residuals_price"])
     return
 
 
@@ -504,9 +505,9 @@ def _(mo):
 
 
 @app.cell
-def _(df, mo, plt, sgt):
+def _(df_resid, mo, plt, sgt):
     # Plot the ACF for residuals
-    sgt.plot_acf(df["residuals_price"], zero=False, lags=40, auto_ylims=True)
+    sgt.plot_acf(df_resid["residuals_price"], zero=False, lags=40, auto_ylims=True)
     plt.title("ACF: FTSE Price Residuals", size=24)
     plt.xlabel("Lags")
     plt.ylabel("Autocorrelation Coefficient")
@@ -523,10 +524,10 @@ def _(mo):
 
 
 @app.cell
-def _(df, mo, plt):
+def _(df_resid, mo, plt):
     # Plot the residual time series.
     # The first row is dropped as it is an outlier, which is expected for AR model residuals.
-    df["residuals_price"][1:].plot(figsize=(20, 5))
+    df_resid["residuals_price"][1:].plot(figsize=(20, 5))
     mo.as_html(plt.gcf())
     return
 
