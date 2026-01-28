@@ -24,8 +24,6 @@ def _(mo):
 
 @app.cell
 def _():
-    from pathlib import Path
-
     import marimo as mo
     import matplotlib.pyplot as plt
     import pandas as pd
@@ -34,9 +32,22 @@ def _():
     import statsmodels.tsa.stattools as sts
     from statsmodels.tsa.arima.model import ARIMA
 
+    from pathlib import Path
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    return ARIMA, MetricsGenerator, ModelGenerator, Path, mo, pd, plt, sgt, sts
+    from typing import Any
+    return (
+        ARIMA,
+        Any,
+        MetricsGenerator,
+        ModelGenerator,
+        Path,
+        mo,
+        pd,
+        plt,
+        sgt,
+        sts,
+    )
 
 
 @app.cell(hide_code=True)
@@ -255,16 +266,29 @@ def _(mo):
 
 
 @app.cell
-def _(ARIMA, ModelGenerator, df):
-    model_generator_prices = ModelGenerator(data=df["market_value"])
-    max_lags = 9
-    param_grid = [{"order": (p, 0, 0)} for p in range(1, max_lags + 1)]
-    model_generator_prices.generate_models(
-        model_function=ARIMA, model_name_prefix="AR", param_grid=param_grid
-    )
+def _(ARIMA, Any, ModelGenerator):
+    def generate_models(data: Any, max_lags: int) -> ModelGenerator:
+        model_generator = ModelGenerator(data=data)
+        max_lags = 9
+        param_grid = [{"order": (p, 0, 0)} for p in range(1, max_lags + 1)]
+        model_generator.generate_models(
+            model_function=ARIMA, model_name_prefix="AR", param_grid=param_grid
+        )
+        return model_generator
+    return (generate_models,)
 
-    model_generator_prices.summarise_results()
+
+@app.cell
+def _(df, generate_models):
+    max_lags = 9
+    model_generator_prices = generate_models(data=df["market_value"], max_lags=max_lags)
     return (model_generator_prices,)
+
+
+@app.cell
+def _(model_generator_prices):
+    model_generator_prices.summarise_results()
+    return
 
 
 @app.cell(hide_code=True)
