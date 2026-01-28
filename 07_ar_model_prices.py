@@ -266,7 +266,10 @@ def _(mo):
 
 
 @app.cell
-def _(ARIMA, Any, ModelGenerator):
+def _(ARIMA, Any, ModelGenerator, mo):
+    # Cache to avoid expensive call unless DataFrame changes.
+    # Currently works with mutating df in place, but may need hashkey if cache behaviour changes.
+    @mo.cache
     def generate_models(data: Any, max_lags: int) -> ModelGenerator:
         model_generator = ModelGenerator(data=data)
         max_lags = 9
@@ -281,7 +284,9 @@ def _(ARIMA, Any, ModelGenerator):
 @app.cell
 def _(df, generate_models):
     max_lags = 9
-    model_generator_prices = generate_models(data=df["market_value"], max_lags=max_lags)
+    model_generator_prices = generate_models(
+        data=df["market_value"], max_lags=max_lags
+    )
     return (model_generator_prices,)
 
 
@@ -454,7 +459,9 @@ def _(df, sts):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity.""")
+    mo.md(
+        r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity."""
+    )
     return
 
 
@@ -471,7 +478,9 @@ def _(df, mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor.""")
+    mo.md(
+        r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor."""
+    )
     return
 
 
