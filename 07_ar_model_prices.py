@@ -299,7 +299,29 @@ def _(df, generate_models):
 
 @app.cell
 def _(model_generator_prices):
-    model_generator_prices.summarise_results()
+    model_prices_results = {
+        model_name: result.summary()
+        for model_name, (_, result) in model_generator_prices.models.items()
+    }
+    return (model_prices_results,)
+
+
+@app.cell
+def _(mo, model_prices_results):
+    model_prices_result_tabs = mo.ui.tabs(model_prices_results)
+    mo.vstack(
+        [
+            mo.md("## Model Results"),
+            model_prices_result_tabs,
+        ]
+    )
+    return
+
+
+@app.cell
+def _():
+    # Combined summary. Uncomment, if needed
+    # model_generator_prices.summarise_results()
     return
 
 
@@ -410,9 +432,7 @@ def _(metrics_prices):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""The returned p-value indicates that the AR_7 model is significanlty better than the AR_1 model."""
-    )
+    mo.md(r"""The returned p-value indicates that the AR_7 model is significanlty better than the AR_1 model.""")
     return
 
 
@@ -466,9 +486,7 @@ def _(df, sts):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity."""
-    )
+    mo.md(r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity.""")
     return
 
 
@@ -485,9 +503,7 @@ def _(df, mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor."""
-    )
+    mo.md(r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor.""")
     return
 
 
