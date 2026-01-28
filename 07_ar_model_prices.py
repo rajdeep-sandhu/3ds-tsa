@@ -407,8 +407,8 @@ def _(metrics_prices, mo, plt):
 def _(mo):
     mo.md(
         r"""
-    - The first model which satisfies the p-values of both the final lag and the LLR Test being non-significant is AR(2). The next is AR(8)
-    - Model AR(7) is selected and a LLR Test is performed against AR(1) to confirm significance.
+    - The p-values of both the final lag and the LLR Test are **non-significant** for AR(2), AR(8) and AR(9).
+    - Af the remaining, Model AR(7) is selected based on the **lowest `aic` and `hqic`**, and a LLR Test is performed against AR(1) to confirm significance.
     """
     )
     return
