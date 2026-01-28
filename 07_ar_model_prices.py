@@ -271,6 +271,13 @@ def _(ARIMA, Any, ModelGenerator, mo):
     # Currently works with mutating df in place, but may need hashkey if cache behaviour changes.
     @mo.cache
     def generate_models(data: Any, max_lags: int) -> ModelGenerator:
+        """
+        Generates ARIMA models up to specified lags.
+
+        ::parameters::
+        - data: The dataset to use for model generation
+        - max_lags: Maximum number of lags for which to generate models
+        """
         model_generator = ModelGenerator(data=data)
         max_lags = 9
         param_grid = [{"order": (p, 0, 0)} for p in range(1, max_lags + 1)]
