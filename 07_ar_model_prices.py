@@ -10,13 +10,19 @@ def _(mo):
     return
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     mo.md(
         r"""
     #### **Description**
 
     - Load and simplify price data to use only FTSE prices.
+    - Generate test:train split, although not used in this notebook.
+    - Examine the ACF and PACF.
+    - Generate the AR(1) model.
+    - Generate higher-lag AR models.
+    - Review model results individually, and as a table and plot of metrics to select a canditate model.
+    - Review the residuals. 
     """
     )
     return
@@ -306,12 +312,18 @@ def _(model_generator_prices):
     return (model_prices_results,)
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""## Model Results""")
+    return
+
+
 @app.cell
 def _(mo, model_prices_results):
     model_prices_result_tabs = mo.ui.tabs(model_prices_results)
     mo.vstack(
         [
-            mo.md("## Model Results"),
+            mo.md("#### **Individual Model Results**"),
             model_prices_result_tabs,
         ]
     )
@@ -353,7 +365,7 @@ def _(mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""#### Create a dataframe to tabulate measures of interest""")
+    mo.md(r"""### Create a dataframe to tabulate measures of interest""")
     return
 
 
@@ -376,7 +388,7 @@ def _(metrics_prices):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""**Plot the test metrics.**""")
+    mo.md(r"""### Plot the test metrics""")
     return
 
 
@@ -411,6 +423,12 @@ def _(mo):
     - Af the remaining, Model AR(7) is selected based on the **lowest `aic` and `hqic`**, and a LLR Test is performed against AR(1) to confirm significance.
     """
     )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""### LLR Test for the selected candidate model""")
     return
 
 
@@ -449,7 +467,7 @@ def _(mo, selected_model):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Analysing the Residuals""")
+    mo.md(r"""## Analyse the Residuals""")
     return
 
 
@@ -498,9 +516,7 @@ def _(df_resid, sts):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity."""
-    )
+    mo.md(r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity.""")
     return
 
 
@@ -517,9 +533,7 @@ def _(df_resid, mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor."""
-    )
+    mo.md(r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor.""")
     return
 
 
