@@ -314,8 +314,65 @@ def _(metrics_prices):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""**Plot the test metrics.**""")
+    return
+
+
 @app.cell
-def _():
+def _(metrics_prices, mo, plt):
+    # Create 2 subplots
+    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 8))
+
+    # Plot final lag p-value on the first subplot
+    metrics_prices.evaluation[["final_lag_pval", "llr_test_pval"]].plot(ax=axes[0])
+    axes[0].set_title("P-Values")
+    axes[1].set_xlabel("Model")
+    axes[0].set_ylabel("P-Value")
+
+    # Plot AIC, BIC, HQIC on the second subplot
+    metrics_prices.evaluation[["aic", "bic", "hqic"]].plot(ax=axes[1])
+    axes[1].set_title("Model Evaluation")
+    axes[1].set_xlabel("Model")
+    axes[1].set_ylabel("Metric Value")
+    axes[1].legend(loc="best")
+
+    plt.tight_layout()
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - The first model which satisfies the p-values of both the final lag and the LLR Test being non-significant is AR(2). The next is AR(8)
+    - Model AR(7) is selected and a LLR Test is performed against AR(1) to confirm significance.
+    """
+    )
+    return
+
+
+@app.cell
+def _(metrics_prices):
+    # Calculate degrees of freedom from the maximum lags of each model
+    deg_freedom_prices = (
+        metrics_prices.evaluation.loc["AR_7_0_0", "ar"]
+        - metrics_prices.evaluation.loc["AR_1_0_0", "ar"]
+    )
+
+    metrics_prices.llr_test(
+        metrics_prices.evaluation.loc["AR_1_0_0", "llf"],
+        metrics_prices.evaluation.loc["AR_7_0_0", "llf"],
+        df=deg_freedom_prices,
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""The returned p-value indicates that the AR_7 model is significanlty better than the AR_1 model.""")
     return
 
 
