@@ -15,6 +15,15 @@ def _(mo):
 @app.cell
 def _():
     import marimo as mo
+    import matplotlib.pyplot as plt
+    import pandas as pd
+    import seaborn as sns
+    import statsmodels.graphics.tsaplots as sgt
+    import statsmodels.tsa.stattools as sts
+    from statsmodels.tsa.arima.model import ARIMA
+
+    from tools.metrics_generator import MetricsGenerator
+    from tools.model_generator import ModelGenerator
     return (mo,)
 
 
