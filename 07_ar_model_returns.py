@@ -33,6 +33,7 @@ def _():
     import marimo as mo
     import matplotlib.pyplot as plt
     import pandas as pd
+    import seaborn as sns
     import statsmodels.graphics.tsaplots as sgt
     import statsmodels.tsa.stattools as sts
     from statsmodels.tsa.arima.model import ARIMA
@@ -40,7 +41,14 @@ def _():
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
 
-    return Path, mo, pd, sts
+    return Path, mo, pd, plt, sgt, sns, sts
+
+
+@app.cell
+def _(sns):
+    # set style using seaborn, although charts are handled by matplotlib.pyplot
+    sns.set_theme(context="notebook", style="white")
+    return
 
 
 @app.cell(hide_code=True)
@@ -203,9 +211,9 @@ def _(mo):
 
 
 @app.cell
-def _(df):
+def _(df, pd):
     # Calculate simple returns and convert to a percentage
-    df_returns = df.copy()
+    df_returns: pd.DataFrame = df.copy()
     df_returns["returns"] = df_returns["market_value"].pct_change(periods=1).mul(100)
 
     # Remove the first row as returns cannot be calculated for the first row
@@ -218,14 +226,14 @@ def _(df):
 def _(mo):
     mo.md(
         r"""
-    ### Perform an ADF on the returns
+    ## Perform an ADF on the returns
     """
     )
     return
 
 
 @app.cell
-def _(df_returns, sts):
+def _(df_returns: "pd.DataFrame", sts):
     sts.adfuller(df_returns["returns"])
     return
 
