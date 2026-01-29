@@ -6,23 +6,19 @@ app = marimo.App(width="full", app_title="07. The AR Model - Returns")
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     # 07. The AR Model - Prices
-    """
-    )
+    """)
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     #### **Description**
 
     - Load and simplify price data to use only FTSE prices.
-    """
-    )
+    """)
     return
 
 
@@ -39,17 +35,14 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-
     return Path, mo, pd, sts
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     ## Load and Preprocess Dataset
-    """
-    )
+    """)
     return
 
 
@@ -59,7 +52,6 @@ def _(Path, mo, pd):
     def load_data(file_path: Path) -> pd.DataFrame:
         print("Reading from disk")
         return pd.read_csv(file_path)
-
     return (load_data,)
 
 
@@ -84,7 +76,6 @@ def _(pd):
         data_out = data_out.asfreq("b")
 
         return data_out
-
     return (set_date_index_frequency,)
 
 
@@ -101,7 +92,6 @@ def _(pd, set_date_index_frequency):
         df_cleaned = df_cleaned.ffill()
 
         return df_cleaned
-
     return (clean_dataset,)
 
 
@@ -119,7 +109,6 @@ def _(pd):
         del data_copy["nikkei"]
 
         return data_copy
-
     return (simplify_dataset,)
 
 
@@ -138,11 +127,9 @@ def _(df_comp: "pd.DataFrame", pd, simplify_dataset):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     ## Generate test:train split
-    """
-    )
+    """)
     return
 
 
@@ -150,34 +137,30 @@ def _(mo):
 def _(df_ftse: "pd.DataFrame"):
     size = int(len(df_ftse) * 0.8)
     df, df_test = df_ftse.iloc[:size].copy(), df_ftse.iloc[size:].copy()
-    return
+    return (df,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     ## Stationarity ADF Test
-    """
-    )
+    """)
     return
 
 
 @app.cell
-def _(df_ftse: "pd.DataFrame", sts):
-    sts.adfuller(df_ftse["market_value"])
+def _(df, sts):
+    sts.adfuller(df["market_value"])
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     - The t-statistic (-1.90) is higher than the 5% critical value.
     - The p-value is higher than 0.05.
     - The null hypothesis can not be rejected and the time series is **non-stationary**.
-    """
-    )
+    """)
     return
 
 
