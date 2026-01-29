@@ -257,5 +257,30 @@ def _(mo):
     return
 
 
+@app.cell
+def _(df_returns: "pd.DataFrame", mo, plt, sgt):
+    sgt.plot_pacf(
+        df_returns["returns"], alpha=0.05, zero=False, lags=40, method="ols", auto_ylims=True
+    )
+    plt.title("PACF: FTSE Returns", size=24)
+    plt.xlabel("Lags")
+    plt.ylabel("Autocorrelation Coefficient")
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The results are very similar to those for the ACF.
+    - Again, this indicates opposing price movements on a daily basis, which fits in with the expectation of cyclical changes.
+    - As the lags increase, the less relevant the coefficient values become. This is because the majority of effects that they have on current vaues should already have been accounted for due to the recursive nature of autoregressive models.
+    - 5 of the first 6 lags are negative. This indicates **clustering**, i.e. temporal structure exists.
+      - There is mean-reverting behavior: A high value tends to be followed by a lower value, and vice versa.
+      - The effect persists across multiple lags, which might suggest **volatility clustering** (a common pattern in financial time series).
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
