@@ -214,5 +214,21 @@ def _(df):
     return (df_returns,)
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    ### Perform an ADF on the returns
+    """
+    )
+    return
+
+
+@app.cell
+def _(df_returns, sts):
+    sts.adfuller(df_returns["returns"])
+    return
+
+
 if __name__ == "__main__":
     app.run()
