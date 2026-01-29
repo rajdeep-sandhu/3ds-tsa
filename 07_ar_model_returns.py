@@ -238,5 +238,17 @@ def _(df_returns: "pd.DataFrame", sts):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    - The t-statistic (-12.77) is more negative than the 5% critical value.
+    - The computed p-value is lower than 0.05.
+    - Both are significant. The null hypothesis can therefore be rejected, indicating that the data is meets the assumptions of stationarity.
+    """
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()
