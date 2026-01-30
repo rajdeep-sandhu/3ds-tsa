@@ -44,6 +44,16 @@ def _():
 def _(sns):
     # set style using seaborn, although charts are handled by matplotlib.pyplot
     sns.set_theme(context="notebook", style="white")
+
+    # CSS style for results
+    RESULT_CSS_STYLE = {
+            "font-family": "monospace",
+            "white-space": "pre-wrap",
+            "padding": "15px",
+            "max-width": "100%",
+            "font-size": "1.1em",
+            "background-color": "#f9f9f9"
+        }
     return
 
 
