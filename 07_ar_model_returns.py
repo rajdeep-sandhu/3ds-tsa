@@ -177,6 +177,16 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    Only the `df` split is used in this notebook.
+    """
+    )
+    return
+
+
 @app.cell
 def _(df_ftse: "pd.DataFrame"):
     size = int(len(df_ftse) * 0.8)
