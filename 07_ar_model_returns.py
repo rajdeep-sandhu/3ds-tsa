@@ -25,6 +25,7 @@ def _(mo):
 @app.cell
 def _():
     from pathlib import Path
+    from typing import Any
 
     import marimo as mo
     import matplotlib.pyplot as plt
@@ -36,7 +37,7 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    return ARIMA, Path, mo, pd, plt, sgt, sns, sts
+    return ARIMA, Any, ModelGenerator, Path, mo, pd, plt, sgt, sns, sts
 
 
 @app.cell
@@ -193,9 +194,7 @@ def _(mo):
 def _(df, pd):
     # Calculate simple returns and convert to a percentage
     df_returns: pd.DataFrame = df.copy()
-    df_returns["returns"] = (
-        df_returns["market_value"].pct_change(periods=1).mul(100)
-    )
+    df_returns["returns"] = df_returns["market_value"].pct_change(periods=1).mul(100)
 
     # Remove the first row as returns cannot be calculated for the first row
     df_returns = df_returns[1:]
@@ -260,7 +259,12 @@ def _(mo):
 @app.cell
 def _(df_returns: "pd.DataFrame", mo, plt, sgt):
     sgt.plot_pacf(
-        df_returns["returns"], alpha=0.05, zero=False, lags=40, method="ols", auto_ylims=True
+        df_returns["returns"],
+        alpha=0.05,
+        zero=False,
+        lags=40,
+        method="ols",
+        auto_ylims=True,
     )
     plt.title("PACF: FTSE Returns", size=24)
     plt.xlabel("Lags")
@@ -306,6 +310,54 @@ def _(mo):
     - The p-value for $C$ is more than 0.05 and the critical values for this contain 0 within the range. Therefore, it is not significant.
     - The p-value for the L1 coefficient is less than 0.05 and the critical value range does not cross 0. Therefore, the L1 coefficient is significant.
     """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Higher-Lag AR Models for Returns
+    """)
+    return
+
+
+@app.cell
+def _(ARIMA, Any, ModelGenerator, mo):
+    # Cache to avoid expensive call unless DataFrame changes.
+    # Currently works with mutating df in place, but may need hashkey if cache behaviour changes.
+    @mo.cache
+    def generate_models(data: Any, max_lags: int) -> ModelGenerator:
+        """
+        Generates ARIMA models up to specified lags.
+
+        ::parameters::
+        - data: The dataset to use for model generation
+        - max_lags: Maximum number of lags for which to generate models
+        """
+        model_generator = ModelGenerator(data=data)
+        param_grid = [{"order": (p, 0, 0)} for p in range(1, max_lags + 1)]
+        model_generator.generate_models(
+            model_function=ARIMA, model_name_prefix="AR", param_grid=param_grid
+        )
+        return model_generator
+    return (generate_models,)
+
+
+@app.cell
+def _(df_returns: "pd.DataFrame", generate_models):
+    max_lags = 9
+    model_generator_returns = generate_models(
+        data=df_returns["market_value"], max_lags=max_lags
+    )
+    return (model_generator_returns,)
+
+
+@app.cell
+def _(model_generator_returns):
+    model_returns_results = {
+        model_name: result.summary()
+        for model_name, (_, result) in model_generator_returns.models.items()
+    }
     return
 
 
