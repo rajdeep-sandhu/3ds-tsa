@@ -488,5 +488,48 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### LLR Test for the selected candidate model
+    """)
+    return
+
+
+@app.cell
+def _(metrics_returns, mo):
+    # Calculate degrees of freedom from the maximum lags of each model
+    selected_model = "AR_6_0_0"
+
+    deg_freedom_prices = (
+        metrics_returns.evaluation.loc[selected_model, "ar"]
+        - metrics_returns.evaluation.loc["AR_1_0_0", "ar"]
+    )
+
+    # Calculate LLR
+    llr_test_prices_p_val = metrics_returns.llr_test(
+        metrics_returns.evaluation.loc["AR_1_0_0", "llf"],
+        metrics_returns.evaluation.loc[selected_model, "llf"],
+        df=deg_freedom_prices,
+    )
+
+    mo.vstack(
+        [
+            mo.md(f"**Selected Model:** {selected_model}"),
+            mo.md(f"Degrees of freedom = {deg_freedom_prices}"),
+            mo.md(f"LLR Test p-value = {llr_test_prices_p_val}"),
+        ]
+    )
+    return (selected_model,)
+
+
+@app.cell(hide_code=True)
+def _(mo, selected_model):
+    mo.md(f"""
+    The returned p-value indicates that the **{selected_model} model** is significantly better than the AR_1 model.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
