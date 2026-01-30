@@ -6,19 +6,23 @@ app = marimo.App(width="full", app_title="07. The AR Model - Returns")
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     # 07. The AR Model - Prices
-    """)
+    """
+    )
     return
 
 
 @app.cell
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     #### **Description**
 
     - Load and simplify price data to use only FTSE prices.
-    """)
+    """
+    )
     return
 
 
@@ -37,6 +41,7 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
+
     return (
         ARIMA,
         Any,
@@ -59,21 +64,23 @@ def _(sns):
 
     # CSS style for results
     RESULT_CSS_STYLE = {
-            "font-family": "monospace",
-            "white-space": "pre-wrap",
-            "padding": "15px",
-            "max-width": "100%",
-            "font-size": "1.1em",
-            "background-color": "#f9f9f9"
-        }
+        "font-family": "monospace",
+        "white-space": "pre-wrap",
+        "padding": "15px",
+        "max-width": "100%",
+        "font-size": "1.1em",
+        "background-color": "#f9f9f9",
+    }
     return (RESULT_CSS_STYLE,)
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Load and Preprocess Dataset
-    """)
+    """
+    )
     return
 
 
@@ -83,6 +90,7 @@ def _(Path, mo, pd):
     def load_data(file_path: Path) -> pd.DataFrame:
         print("Reading from disk")
         return pd.read_csv(file_path)
+
     return (load_data,)
 
 
@@ -107,6 +115,7 @@ def _(pd):
         data_out = data_out.asfreq("b")
 
         return data_out
+
     return (set_date_index_frequency,)
 
 
@@ -123,6 +132,7 @@ def _(pd, set_date_index_frequency):
         df_cleaned = df_cleaned.ffill()
 
         return df_cleaned
+
     return (clean_dataset,)
 
 
@@ -140,6 +150,7 @@ def _(pd):
         del data_copy["nikkei"]
 
         return data_copy
+
     return (simplify_dataset,)
 
 
@@ -158,9 +169,11 @@ def _(df_comp: "pd.DataFrame", pd, simplify_dataset):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Generate test:train split
-    """)
+    """
+    )
     return
 
 
@@ -173,9 +186,11 @@ def _(df_ftse: "pd.DataFrame"):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Stationarity ADF Test
-    """)
+    """
+    )
     return
 
 
@@ -187,28 +202,34 @@ def _(df, sts):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     - The t-statistic (-1.90) is higher than the 5% critical value.
     - The p-value is higher than 0.05.
     - The null hypothesis **cannot be rejected** and the time series is **non-stationary**.
-    """)
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Use Returns instead of Prices
-    """)
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     - Because price data is non-stationary, an AR model is not suitable.
     - However, it can be transformed into returns so that it fits the assumptions of stationarity.
-    """)
+    """
+    )
     return
 
 
@@ -226,9 +247,11 @@ def _(df, pd):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Perform an ADF on the returns
-    """)
+    """
+    )
     return
 
 
@@ -240,19 +263,23 @@ def _(df_returns: "pd.DataFrame", sts):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     - The t-statistic (-12.77) is more negative than the 5% critical value.
     - The computed p-value is lower than 0.05.
     - Both are significant. The null hypothesis can therefore be rejected, indicating that the data is meets the assumptions of stationarity.
-    """)
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## ACF and PACF for Returns
-    """)
+    """
+    )
     return
 
 
@@ -268,13 +295,15 @@ def _(df_returns: "pd.DataFrame", mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     - The ACF graph is very different from that for prices.
     - The coefficients vary in sign, magnitude and significance.
     - The first few lags are predomnantly significant and predominantly negative. This indicates that consecutive returns move in different directions.
     - This suggests that returns oevr the entire week are relevant to the current one. (NB A business weekis 5 days.)
     - The negative relationship can be interpreted as some form of natural adjustment occuring in the market.
-    """)
+    """
+    )
     return
 
 
@@ -297,22 +326,26 @@ def _(df_returns: "pd.DataFrame", mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     - The results are very similar to those for the ACF.
     - Again, this indicates opposing price movements on a daily basis, which fits in with the expectation of cyclical changes.
     - As the lags increase, the less relevant the coefficient values become. This is because the majority of effects that they have on current vaues should already have been accounted for due to the recursive nature of autoregressive models.
     - 5 of the first 6 lags are negative. This indicates **clustering**, i.e. temporal structure exists.
       - There is mean-reverting behavior: A high value tends to be followed by a lower value, and vice versa.
       - The effect persists across multiple lags, which might suggest **volatility clustering** (a common pattern in financial time series).
-    """)
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## The AR(1) Model for Returns
-    """)
+    """
+    )
     return
 
 
@@ -327,18 +360,22 @@ def _(ARIMA, RESULT_CSS_STYLE, df_returns: "pd.DataFrame", mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     - The p-value for $C$ is more than 0.05 and the critical values for this contain 0 within the range. Therefore, it is not significant.
     - The p-value for the L1 coefficient is less than 0.05 and the critical value range does not cross 0. Therefore, the L1 coefficient is significant.
-    """)
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Higher-Lag AR Models for Returns
-    """)
+    """
+    )
     return
 
 
@@ -361,6 +398,7 @@ def _(ARIMA, Any, ModelGenerator, mo):
             model_function=ARIMA, model_name_prefix="AR", param_grid=param_grid
         )
         return model_generator
+
     return (generate_models,)
 
 
@@ -376,9 +414,11 @@ def _(df_returns: "pd.DataFrame", generate_models):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ## Model Results
-    """)
+    """
+    )
     return
 
 
@@ -415,9 +455,11 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ### Create a dataframe to tabulate measures of interest
-    """)
+    """
+    )
     return
 
 
@@ -431,28 +473,30 @@ def _(MetricsGenerator, model_generator_returns):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     - The llf gradually becomes less negative, with slowing down AR_6 onwards.
     - The AIC and HQIC decrease till AR_6 and then start to increase.
     - The BIC reduces till AR_5 and then starts increasing sharply.
-    """)
+    """
+    )
     return
 
 
 @app.cell
 def _(metrics_returns):
     # Find models where both the final lag and the LLR Test p-values fail to reach significance.
-    metrics_returns.evaluation.query(
-        "final_lag_pval >= 0.05 and llr_test_pval >= 0.05"
-    )
+    metrics_returns.evaluation.query("final_lag_pval >= 0.05 and llr_test_pval >= 0.05")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ### Plot the test metrics
-    """)
+    """
+    )
     return
 
 
@@ -481,18 +525,22 @@ def _(metrics_returns, mo, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     - The p-values of both the final lag and the LLR Test are **non-significant** for AR(7) and AR(9).
     - Of the remaining, Model AR() is selected based on the **lowest `aic` and `hqic`**, and a LLR Test is performed against AR(1) to confirm significance.
-    """)
+    """
+    )
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""
+    mo.md(
+        r"""
     ### LLR Test for the selected candidate model
-    """)
+    """
+    )
     return
 
 
@@ -525,9 +573,44 @@ def _(metrics_returns, mo):
 
 @app.cell(hide_code=True)
 def _(mo, selected_model):
-    mo.md(f"""
+    mo.md(
+        f"""
     The returned p-value indicates that the **{selected_model} model** is significantly better than the AR_1 model.
-    """)
+    """
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(
+        r"""
+    ## Normalised Prices and Returns
+    """
+    )
+    return
+
+
+@app.cell
+def _(df_returns: "pd.DataFrame", pd):
+    # Normalise prices and returns to 100 as the starting point
+    df_returns_norm: pd.DataFrame = df_returns.copy()
+
+    df_returns_norm["market_val_norm"] = (
+        df_returns_norm["market_value"]
+        .div(df_returns_norm["market_value"].iloc[0])
+        .mul(100)
+    )
+
+    df_returns_norm["returns_norm"] = (
+        df_returns_norm["returns"].div(df_returns_norm["returns"].iloc[0]).mul(100)
+    )
+    return (df_returns_norm,)
+
+
+@app.cell
+def _(df_returns_norm: "pd.DataFrame"):
+    df_returns_norm
     return
 
 
