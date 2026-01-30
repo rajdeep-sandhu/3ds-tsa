@@ -448,5 +448,45 @@ def _(metrics_returns):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Plot the test metrics
+    """)
+    return
+
+
+@app.cell
+def _(metrics_returns, mo, plt):
+    # Create 2 subplots
+    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
+
+    # Plot final lag p-value on the first subplot
+    metrics_returns.evaluation[["final_lag_pval", "llr_test_pval"]].plot(ax=axes[0])
+    axes[0].set_title("P-Values")
+    axes[1].set_xlabel("Model")
+    axes[0].set_ylabel("P-Value")
+
+    # Plot AIC, BIC, HQIC on the second subplot
+    metrics_returns.evaluation[["aic", "bic", "hqic"]].plot(ax=axes[1])
+    axes[1].set_title("Model Evaluation")
+    axes[1].set_xlabel("Model")
+    axes[1].set_ylabel("Metric Value")
+    axes[1].legend(loc="best")
+
+    plt.tight_layout()
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The p-values of both the final lag and the LLR Test are **non-significant** for AR(7) and AR(9).
+    - Of the remaining, Model AR() is selected based on the **lowest `aic` and `hqic`**, and a LLR Test is performed against AR(1) to confirm significance.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
