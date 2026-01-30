@@ -347,7 +347,7 @@ def _(ARIMA, Any, ModelGenerator, mo):
 def _(df_returns: "pd.DataFrame", generate_models):
     max_lags = 9
     model_generator_returns = generate_models(
-        data=df_returns["market_value"], max_lags=max_lags
+        data=df_returns["returns"], max_lags=max_lags
     )
     return (model_generator_returns,)
 
@@ -358,6 +358,33 @@ def _(model_generator_returns):
         model_name: result.summary()
         for model_name, (_, result) in model_generator_returns.models.items()
     }
+    return (model_returns_results,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Model Results
+    """)
+    return
+
+
+@app.cell
+def _(mo, model_returns_results):
+    model_returns_result_tabs = mo.ui.tabs(model_returns_results)
+    mo.vstack(
+        [
+            mo.md("#### **Individual Model Results**"),
+            model_returns_result_tabs,
+        ]
+    )
+    return
+
+
+@app.cell
+def _():
+    # Combined summary. Uncomment, if needed
+    # model_generator_returns.summarise_results()
     return
 
 
