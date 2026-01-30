@@ -36,7 +36,7 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    return Path, mo, pd, plt, sgt, sns, sts
+    return ARIMA, Path, mo, pd, plt, sgt, sns, sts
 
 
 @app.cell
@@ -278,6 +278,33 @@ def _(mo):
     - 5 of the first 6 lags are negative. This indicates **clustering**, i.e. temporal structure exists.
       - There is mean-reverting behavior: A high value tends to be followed by a lower value, and vice versa.
       - The effect persists across multiple lags, which might suggest **volatility clustering** (a common pattern in financial time series).
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## The AR(1) Model for Returns
+    """)
+    return
+
+
+@app.cell
+def _(ARIMA, df_returns: "pd.DataFrame", mo):
+    model_returns = ARIMA(df_returns["returns"], order=(1, 0, 0))
+    result_returns = model_returns.fit()
+    # print displays better than mo.md()
+    with mo.redirect_stdout():
+        print(result_returns.summary())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The p-value for $C$ is more than 0.05 and the critical values for this contain 0 within the range. Therefore, it is not significant.
+    - The p-value for the L1 coefficient is less than 0.05 and the critical value range does not cross 0. Therefore, the L1 coefficient is significant.
     """)
     return
 
