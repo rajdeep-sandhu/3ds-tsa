@@ -181,7 +181,7 @@ def _(mo):
 def _(mo):
     mo.md(
         r"""
-    Only the `df` split is used in this notebook.
+    Only the `df` (train) part of the split is used in this notebook. The tests and models are based on this rather than the full dataset.
     """
     )
     return
