@@ -737,19 +737,26 @@ def _(mo):
 
 
 @app.cell
-def _(metrics_returns_norm, plt):
-    def generate_metrics_plots() -> "matplotlib.figure.Figure":
+def _(MetricsGenerator, plt):
+    def generate_metrics_plots(metrics: MetricsGenerator) -> "matplotlib.figure.Figure":
+        """
+        Plot the supplied model comparison metrics.
+
+        Params:
+        metrics: DataFrame from a tools.metrics_generator.MetricsGenerator object
+        """
+    
         # Create 2 subplots
         fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
 
         # Plot final lag p-value on the first subplot
-        metrics_returns_norm.evaluation[["final_lag_pval", "llr_test_pval"]].plot(ax=axes[0])
+        metrics.evaluation[["final_lag_pval", "llr_test_pval"]].plot(ax=axes[0])
         axes[0].set_title("P-Values")
         axes[1].set_xlabel("Model")
         axes[0].set_ylabel("P-Value")
 
         # Plot AIC, BIC, HQIC on the second subplot
-        metrics_returns_norm.evaluation[["aic", "bic", "hqic"]].plot(ax=axes[1])
+        metrics.evaluation[["aic", "bic", "hqic"]].plot(ax=axes[1])
         axes[1].set_title("Model Evaluation")
         axes[1].set_xlabel("Model")
         axes[1].set_ylabel("Metric Value")
@@ -761,8 +768,8 @@ def _(metrics_returns_norm, plt):
 
 
 @app.cell
-def _(generate_metrics_plots):
-    generate_metrics_plots()
+def _(generate_metrics_plots, metrics_returns_norm):
+    generate_metrics_plots(metrics_returns_norm)
     return
 
 
