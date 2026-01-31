@@ -620,5 +620,30 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## The AR(1) Model for Normalized Returns
+    """)
+    return
+
+
+@app.cell
+def _(ARIMA, RESULT_CSS_STYLE, df_returns_norm: "pd.DataFrame", mo):
+    model_returns_norm = ARIMA(df_returns_norm["returns_norm"], order=(1, 0, 0))
+    result_returns_norm = model_returns_norm.fit()
+    # print displays better than mo.md()
+    mo.as_html(result_returns_norm.summary()).style(RESULT_CSS_STYLE)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The const values are different for the returns and normalised returns, but the ar.L1 is the same.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
