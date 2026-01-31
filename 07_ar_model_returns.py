@@ -695,5 +695,38 @@ def _(mo, model_returns_norm_results_html):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### Create a dataframe to tabulate measures of interest
+    """)
+    return
+
+
+@app.cell
+def _(MetricsGenerator, model_generator_returns_norm):
+    metrics_returns_norm = MetricsGenerator(models=model_generator_returns_norm.models)
+    metrics_returns_norm.generate_metrics_table()
+    metrics_returns_norm.evaluation
+    return (metrics_returns_norm,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The llf gradually becomes less negative, with slowing down AR_6 onwards.
+    - The AIC and HQIC decrease till AR_6 and then start to increase.
+    - The BIC reduces till AR_5 and then starts increasing.
+    """)
+    return
+
+
+@app.cell
+def _(metrics_returns_norm):
+    # Find models where both the final lag and the LLR Test p-values fail to reach significance.
+    metrics_returns_norm.evaluation.query("final_lag_pval >= 0.05 and llr_test_pval >= 0.05")
+    return
+
+
 if __name__ == "__main__":
     app.run()
