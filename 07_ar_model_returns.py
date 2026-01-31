@@ -37,7 +37,6 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-
     return (
         ARIMA,
         Any,
@@ -84,7 +83,6 @@ def _(Path, mo, pd):
     def load_data(file_path: Path) -> pd.DataFrame:
         print("Reading from disk")
         return pd.read_csv(file_path)
-
     return (load_data,)
 
 
@@ -109,7 +107,6 @@ def _(pd):
         data_out = data_out.asfreq("b")
 
         return data_out
-
     return (set_date_index_frequency,)
 
 
@@ -126,7 +123,6 @@ def _(pd, set_date_index_frequency):
         df_cleaned = df_cleaned.ffill()
 
         return df_cleaned
-
     return (clean_dataset,)
 
 
@@ -144,7 +140,6 @@ def _(pd):
         del data_copy["nikkei"]
 
         return data_copy
-
     return (simplify_dataset,)
 
 
@@ -374,7 +369,6 @@ def _(ARIMA, Any, ModelGenerator, mo):
             model_function=ARIMA, model_name_prefix="AR", param_grid=param_grid
         )
         return model_generator
-
     return (generate_models,)
 
 
@@ -571,6 +565,58 @@ def _(df_returns: "pd.DataFrame", pd):
 @app.cell
 def _(df_returns_norm: "pd.DataFrame"):
     df_returns_norm
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Stationarity ADF Test for Normalized Prices and Returns
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### ADF for Normalized Prices
+    """)
+    return
+
+
+@app.cell
+def _(df_returns_norm: "pd.DataFrame", sts):
+    sts.adfuller(df_returns_norm["market_val_norm"])
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The ADF t-statistic is less negative than the 5% critical value and the computed p-value is greater than 0.05, which suggests non-stationarity. Therefore, normalisation does not make prices suitable for an AR model.
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### ADF for Normalized Returns
+    """)
+    return
+
+
+@app.cell
+def _(df_returns_norm: "pd.DataFrame", sts):
+    sts.adfuller(df_returns_norm["returns_norm"])
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The ADF t-statistic is much more negative than the 5% critical value. The computed p-value is significant. This suggests stationarity. Normalised returns therefore remain suitable for an AR model.
+    """)
     return
 
 
