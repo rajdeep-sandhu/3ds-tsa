@@ -645,5 +645,23 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Higher-Lag AR Models for Normalized Returns
+    """)
+    return
+
+
+@app.cell
+def _(df_returns: "pd.DataFrame", generate_models):
+    # Generate models up to 9 lags
+    max_lags_norm = 9
+    model_generator_returns_norm = generate_models(
+        data=df_returns["returns"], max_lags=max_lags_norm
+    )
+    return
+
+
 if __name__ == "__main__":
     app.run()
