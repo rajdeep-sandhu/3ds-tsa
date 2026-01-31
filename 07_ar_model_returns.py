@@ -463,25 +463,39 @@ def _(mo):
 
 
 @app.cell
-def _(metrics_returns, mo, plt):
-    # Create 2 subplots
-    fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
+def _(MetricsGenerator, plt):
+    def generate_metrics_plots(metrics: MetricsGenerator) -> "matplotlib.figure.Figure":
+        """
+        Plot the supplied model comparison metrics.
 
-    # Plot final lag p-value on the first subplot
-    metrics_returns.evaluation[["final_lag_pval", "llr_test_pval"]].plot(ax=axes[0])
-    axes[0].set_title("P-Values")
-    axes[1].set_xlabel("Model")
-    axes[0].set_ylabel("P-Value")
+        Params:
+        metrics: DataFrame from a tools.metrics_generator.MetricsGenerator object
+        """
+    
+        # Create 2 subplots
+        fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
 
-    # Plot AIC, BIC, HQIC on the second subplot
-    metrics_returns.evaluation[["aic", "bic", "hqic"]].plot(ax=axes[1])
-    axes[1].set_title("Model Evaluation")
-    axes[1].set_xlabel("Model")
-    axes[1].set_ylabel("Metric Value")
-    axes[1].legend(loc="best")
+        # Plot final lag p-value on the first subplot
+        metrics.evaluation[["final_lag_pval", "llr_test_pval"]].plot(ax=axes[0])
+        axes[0].set_title("P-Values")
+        axes[1].set_xlabel("Model")
+        axes[0].set_ylabel("P-Value")
 
-    plt.tight_layout()
-    mo.as_html(plt.gcf())
+        # Plot AIC, BIC, HQIC on the second subplot
+        metrics.evaluation[["aic", "bic", "hqic"]].plot(ax=axes[1])
+        axes[1].set_title("Model Evaluation")
+        axes[1].set_xlabel("Model")
+        axes[1].set_ylabel("Metric Value")
+        axes[1].legend(loc="best")
+
+        plt.tight_layout()
+        return fig
+    return (generate_metrics_plots,)
+
+
+@app.cell
+def _(generate_metrics_plots, metrics_returns):
+    generate_metrics_plots(metrics_returns)
     return
 
 
@@ -734,37 +748,6 @@ def _(mo):
     ### Plot the test metrics
     """)
     return
-
-
-@app.cell
-def _(MetricsGenerator, plt):
-    def generate_metrics_plots(metrics: MetricsGenerator) -> "matplotlib.figure.Figure":
-        """
-        Plot the supplied model comparison metrics.
-
-        Params:
-        metrics: DataFrame from a tools.metrics_generator.MetricsGenerator object
-        """
-    
-        # Create 2 subplots
-        fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
-
-        # Plot final lag p-value on the first subplot
-        metrics.evaluation[["final_lag_pval", "llr_test_pval"]].plot(ax=axes[0])
-        axes[0].set_title("P-Values")
-        axes[1].set_xlabel("Model")
-        axes[0].set_ylabel("P-Value")
-
-        # Plot AIC, BIC, HQIC on the second subplot
-        metrics.evaluation[["aic", "bic", "hqic"]].plot(ax=axes[1])
-        axes[1].set_title("Model Evaluation")
-        axes[1].set_xlabel("Model")
-        axes[1].set_ylabel("Metric Value")
-        axes[1].legend(loc="best")
-
-        plt.tight_layout()
-        return fig
-    return (generate_metrics_plots,)
 
 
 @app.cell
