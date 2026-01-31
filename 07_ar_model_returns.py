@@ -385,7 +385,7 @@ def _(df_returns: "pd.DataFrame", generate_models):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Model Results
+    ## Model Results for Returns
     """)
     return
 
@@ -654,11 +654,43 @@ def _(mo):
 
 
 @app.cell
-def _(df_returns: "pd.DataFrame", generate_models):
+def _(df_returns_norm: "pd.DataFrame", generate_models):
     # Generate models up to 9 lags
     max_lags_norm = 9
     model_generator_returns_norm = generate_models(
-        data=df_returns["returns"], max_lags=max_lags_norm
+        data=df_returns_norm["returns_norm"], max_lags=max_lags_norm
+    )
+    return (model_generator_returns_norm,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Model Results for Normalized Returns
+    """)
+    return
+
+
+@app.cell
+def _(RESULT_CSS_STYLE, mo, model_generator_returns_norm):
+    # Define dict with results as html for tab display
+    model_returns_norm_results_html = {
+        model_name: mo.as_html(result.summary()).style(RESULT_CSS_STYLE)
+        for model_name, (_, result) in model_generator_returns_norm.models.items()
+    }
+    return (model_returns_norm_results_html,)
+
+
+@app.cell
+def _(mo, model_returns_norm_results_html):
+    # Define and display result tabs
+    model_returns_norm_result_tabs = mo.ui.tabs(model_returns_norm_results_html)
+
+    mo.vstack(
+        [
+            mo.md("#### **Individual Model Results**"),
+            model_returns_norm_result_tabs,
+        ]
     )
     return
 
