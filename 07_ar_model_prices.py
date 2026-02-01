@@ -308,7 +308,6 @@ def _(ARIMA, Any, ModelGenerator, mo):
         - max_lags: Maximum number of lags for which to generate models
         """
         model_generator = ModelGenerator(data=data)
-        max_lags = 9
         param_grid = [{"order": (p, 0, 0)} for p in range(1, max_lags + 1)]
         model_generator.generate_models(
             model_function=ARIMA, model_name_prefix="AR", param_grid=param_grid
