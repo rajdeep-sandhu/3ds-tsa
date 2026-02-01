@@ -7,7 +7,7 @@ app = marimo.App(width="full", app_title="07. The AR Model - Returns")
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    # 07. The AR Model - Prices
+    # 07. The AR Model - Returns
     """)
     return
 
@@ -18,6 +18,19 @@ def _(mo):
     #### **Description**
 
     - Load and simplify price data to use only FTSE prices.
+    - Generate test:train split, although only the train part is used in this notebook.
+    - Examine the ADF for prices.
+    - Calculate returns.
+    - Examine the ADF, ACF and PACF for returns.
+    - Generate the AR(1) model for returns.
+    - Generate higher lag models for returns.
+    - Review model results for returns individually, and as a table and plot of metrics to select a canditate model.
+    - Calculate normalized prices and returns.
+    - Examine ADF for normalized prices and returns.
+    - Generate the AR(1) model for normalized returns.
+    - Generate higher lag models for normalized returns.
+    - Review model results for normalized returns individually, and as a table and plot of metrics to select a canditate model.
+    - Analyse the residuals (on non-normalized returns).
     """)
     return
 
@@ -532,7 +545,7 @@ def _(MetricsGenerator):
         complex_model: Name of the more complex model, to be compared with simple_model
         simple_model: Name of the lower lag model
         """
-    
+
         # Calculate degrees of freedom from the maximum lags of each model
         deg_freedom = (
             metrics.evaluation.loc[complex_model, "ar"]
@@ -579,7 +592,7 @@ def _(mo, returns_model_base, returns_model_selected):
 @app.cell(hide_code=True)
 def _(mo):
     mo.md(r"""
-    ## Normalised Prices and Returns
+    ## Normalized Prices and Returns
     """)
     return
 
