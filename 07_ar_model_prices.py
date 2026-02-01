@@ -420,7 +420,7 @@ def _(mo):
     mo.md(
         r"""
     - The p-values of both the final lag and the LLR Test are **non-significant** for AR(2), AR(8) and AR(9).
-    - Af the remaining, Model AR(7) is selected based on the **lowest `aic` and `hqic`**, and a LLR Test is performed against AR(1) to confirm significance.
+    - Of the remaining, Model AR(7) is selected based on the **lowest `aic` and `hqic`**, and a LLR Test is performed against AR(1) to confirm significance.
     """
     )
     return
