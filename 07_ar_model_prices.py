@@ -72,7 +72,7 @@ def _(sns):
         "font-size": "1.1em",
         "background-color": "#f9f9f9",
     }
-    return
+    return (RESULT_CSS_STYLE,)
 
 
 @app.cell(hide_code=True)
@@ -263,10 +263,10 @@ def _(mo):
 
 
 @app.cell
-def _(ARIMA, df):
+def _(ARIMA, RESULT_CSS_STYLE, df, mo):
     model_prices = ARIMA(df["market_value"], order=(1, 0, 0))
     result_prices = model_prices.fit()
-    result_prices.summary()
+    mo.as_html(result_prices.summary()).style(RESULT_CSS_STYLE)
     return
 
 
