@@ -888,5 +888,24 @@ def _(mo):
     return
 
 
+@app.cell
+def _(df_resid, mo, plt, sgt):
+    # Plot the ACF for residuals
+    sgt.plot_acf(df_resid["residuals_returns"], zero=False, lags=40, auto_ylims=True)
+    plt.title("ACF: FTSE Returns Residuals", size=24)
+    plt.xlabel("Lags")
+    plt.ylabel("Autocorrelation Coefficient")
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, 7 values are significantly different from 0, which indicate that there might be a better predictor.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
