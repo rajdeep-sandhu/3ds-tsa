@@ -565,13 +565,13 @@ def _(llr_from_model, metrics_returns):
         complex_model=returns_model_selected,
         simple_model=returns_model_base,
     )
-    return
+    return returns_model_base, returns_model_selected
 
 
 @app.cell(hide_code=True)
-def _(mo):
-    mo.md("""
-    The returned p-value indicates that the **{selected_model} model** is significantly better than the AR_1 model.
+def _(mo, returns_model_base, returns_model_selected):
+    mo.md(f"""
+    The returned p-value indicates that the **{returns_model_selected} model** is significantly better than the {returns_model_base} model.
     """)
     return
 
@@ -811,13 +811,13 @@ def _(llr_from_model, metrics_returns_norm):
         complex_model=returns_norm_model_selected,
         simple_model=returns_norm_model_base,
     )
-    return
+    return returns_norm_model_base, returns_norm_model_selected
 
 
 @app.cell(hide_code=True)
-def _(mo):
-    mo.md(r"""
-    The returned p-value indicates that the AR_6 model is significantly better than the AR_1 model.
+def _(mo, returns_norm_model_base, returns_norm_model_selected):
+    mo.md(f"""
+    The returned p-value indicates that the **{returns_norm_model_selected} model** is significantly better than the {returns_norm_model_base} model.
     """)
     return
 
