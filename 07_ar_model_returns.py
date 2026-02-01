@@ -520,35 +520,57 @@ def _(mo):
 
 
 @app.cell
-def _(metrics_returns, mo):
-    # Calculate degrees of freedom from the maximum lags of each model
-    selected_model = "AR_6_0_0"
+def _(MetricsGenerator):
+    def llr_from_model(
+        metrics: MetricsGenerator, complex_model: str, simple_model: str
+    ):
+        """
+        Perform LLR Test between two nested models passed by name.
 
-    deg_freedom_returns = (
-        metrics_returns.evaluation.loc[selected_model, "ar"]
-        - metrics_returns.evaluation.loc["AR_1_0_0", "ar"]
-    )
+        Params:
+        metrics: tools.metrics_generator.MetricsGenerator object with comparative metrics
+        complex_model: Name of the more complex model, to be compared with simple_model
+        simple_model: Name of the lower lag model
+        """
+    
+        # Calculate degrees of freedom from the maximum lags of each model
+        deg_freedom = (
+            metrics.evaluation.loc[complex_model, "ar"]
+            - metrics.evaluation.loc[simple_model, "ar"]
+        )
 
-    # Calculate LLR
-    llr_test_returns_p_val = metrics_returns.llr_test(
-        metrics_returns.evaluation.loc["AR_1_0_0", "llf"],
-        metrics_returns.evaluation.loc[selected_model, "llf"],
-        df=deg_freedom_returns,
-    )
+        # Calculate LLR
+        llr_test_returns_p_val = metrics.llr_test(
+            metrics.evaluation.loc[simple_model, "llf"],
+            metrics.evaluation.loc[complex_model, "llf"],
+            df=deg_freedom,
+        )
 
-    mo.vstack(
-        [
-            mo.md(f"**Selected Model:** {selected_model}"),
-            mo.md(f"Degrees of freedom = {deg_freedom_returns}"),
-            mo.md(f"LLR Test p-value = {llr_test_returns_p_val}"),
-        ]
+        return {
+            "complex_model": complex_model,
+            "simple_model": simple_model,
+            "deg_freedom": deg_freedom,
+            "llr_p_val": llr_test_returns_p_val,
+        }
+    return (llr_from_model,)
+
+
+@app.cell
+def _(llr_from_model, metrics_returns):
+    returns_model_selected = "AR_6_0_0"
+    returns_model_base = "AR_1_0_0"
+
+    llr_from_model(
+        metrics=metrics_returns,
+        complex_model=returns_model_selected,
+        simple_model=returns_model_base,
     )
-    return (selected_model,)
+    return
 
 
 @app.cell(hide_code=True)
-def _(mo, selected_model):
-    mo.md(f"""
+def _(mo):
+    mo.md("""
     The returned p-value indicates that the **{selected_model} model** is significantly better than the AR_1 model.
     """)
     return
