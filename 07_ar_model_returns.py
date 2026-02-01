@@ -873,5 +873,20 @@ def _(mo):
     return
 
 
+@app.cell
+def _(df_resid, sts):
+    # ADF Test
+    sts.adfuller(df_resid["residuals_returns"])
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
