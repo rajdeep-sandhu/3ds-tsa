@@ -449,7 +449,9 @@ def _(mo):
 @app.cell
 def _(metrics_returns):
     # Find models where both the final lag and the LLR Test p-values fail to reach significance.
-    metrics_returns.evaluation.query("final_lag_pval >= 0.05 and llr_test_pval >= 0.05")
+    metrics_returns.evaluation.query(
+        "final_lag_pval >= 0.05 and llr_test_pval >= 0.05"
+    )
     return
 
 
@@ -463,7 +465,9 @@ def _(mo):
 
 @app.cell
 def _(MetricsGenerator, plt):
-    def generate_metrics_plots(metrics: MetricsGenerator) -> "matplotlib.figure.Figure":
+    def generate_metrics_plots(
+        metrics: MetricsGenerator,
+    ) -> "matplotlib.figure.Figure":
         """
         Plot the supplied model comparison metrics.
 
@@ -520,23 +524,23 @@ def _(metrics_returns, mo):
     # Calculate degrees of freedom from the maximum lags of each model
     selected_model = "AR_6_0_0"
 
-    deg_freedom_prices = (
+    deg_freedom_returns = (
         metrics_returns.evaluation.loc[selected_model, "ar"]
         - metrics_returns.evaluation.loc["AR_1_0_0", "ar"]
     )
 
     # Calculate LLR
-    llr_test_prices_p_val = metrics_returns.llr_test(
+    llr_test_returns_p_val = metrics_returns.llr_test(
         metrics_returns.evaluation.loc["AR_1_0_0", "llf"],
         metrics_returns.evaluation.loc[selected_model, "llf"],
-        df=deg_freedom_prices,
+        df=deg_freedom_returns,
     )
 
     mo.vstack(
         [
             mo.md(f"**Selected Model:** {selected_model}"),
-            mo.md(f"Degrees of freedom = {deg_freedom_prices}"),
-            mo.md(f"LLR Test p-value = {llr_test_prices_p_val}"),
+            mo.md(f"Degrees of freedom = {deg_freedom_returns}"),
+            mo.md(f"LLR Test p-value = {llr_test_returns_p_val}"),
         ]
     )
     return (selected_model,)
@@ -718,7 +722,9 @@ def _(mo):
 
 @app.cell
 def _(MetricsGenerator, model_generator_returns_norm):
-    metrics_returns_norm = MetricsGenerator(models=model_generator_returns_norm.models)
+    metrics_returns_norm = MetricsGenerator(
+        models=model_generator_returns_norm.models
+    )
     metrics_returns_norm.generate_metrics_table()
     metrics_returns_norm.evaluation
     return (metrics_returns_norm,)
@@ -736,7 +742,9 @@ def _(mo):
 @app.cell
 def _(metrics_returns_norm):
     # Find models where both the final lag and the LLR Test p-values fail to reach significance.
-    metrics_returns_norm.evaluation.query("final_lag_pval >= 0.05 and llr_test_pval >= 0.05")
+    metrics_returns_norm.evaluation.query(
+        "final_lag_pval >= 0.05 and llr_test_pval >= 0.05"
+    )
     return
 
 
