@@ -793,5 +793,34 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ### LLR Test for the selected candidate model
+    """)
+    return
+
+
+@app.cell
+def _(llr_from_model, metrics_returns_norm):
+    returns_norm_model_selected = "AR_6_0_0"
+    returns_norm_model_base = "AR_1_0_0"
+
+    llr_from_model(
+        metrics=metrics_returns_norm,
+        complex_model=returns_norm_model_selected,
+        simple_model=returns_norm_model_base,
+    )
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    The returned p-value indicates that the AR_6 model is significantly better than the AR_1 model.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
