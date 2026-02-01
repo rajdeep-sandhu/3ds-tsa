@@ -907,5 +907,22 @@ def _(mo):
     return
 
 
+@app.cell
+def _(df_resid, mo, plt):
+    # Plot the residual time series.
+    df_resid["residuals_returns"].plot(figsize=(20, 5))
+    mo.as_html(plt.gcf())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - As with price residuals, the returns residuals are mostly low and the residuals time series does not indicate an obvious pattern, so the choice of model seems correct.
+    - The spike around 2008 coincides with the start of The Great Recession.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
