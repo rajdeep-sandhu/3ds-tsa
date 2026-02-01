@@ -754,5 +754,14 @@ def _(generate_metrics_plots, metrics_returns_norm):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The p-values of both the final lag and the LLR Test are **non-significant** for AR(7) and AR(9).
+    - Of the remaining, Model AR(6) is selected based on the **lowest `aic` and `hqic`**, and a LLR Test is performed against AR(1) to confirm significance.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
