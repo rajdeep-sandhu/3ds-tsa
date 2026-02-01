@@ -17,7 +17,7 @@ def _():
     import marimo as mo
     import matplotlib.pyplot as plt
     import pandas as pd
-    import scipy.stats
+    import scipy
     import seaborn as sns
     return mo, pd, plt, scipy, sns
 
