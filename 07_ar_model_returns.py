@@ -822,5 +822,56 @@ def _(mo):
     return
 
 
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Analyse the Residuals
+    """)
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - Residual analysis is conducted on returns without normalization, as normalization has no significant bearing on model selection.
+    - Normalization, however, dows become relevant when comparing different indices, e.g. `FTSE` vs `S&P500`.
+    """)
+    return
+
+
+@app.cell
+def _(df_returns: "pd.DataFrame", model_generator_returns):
+    # Get residuals from the AR_7 model result
+    df_resid = df_returns.copy()
+    df_resid["residuals_returns"] = model_generator_returns.get_model("AR_6_0_0")[1].resid
+    return (df_resid,)
+
+
+@app.cell
+def _(df_resid, mo):
+    mo.vstack(
+        [
+            f"Mean: {df_resid['residuals_returns'].mean()}",
+            f"Variance: {df_resid['residuals_returns'].var()}",
+        ]
+    )
+    return
+
+
+@app.cell
+def _(df_resid, mo):
+    mo.as_html(df_resid["residuals_returns"].plot.box())
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    - The mean is close to 0 and the variance is low, which suggests that the model performs well.
+    - The mean close to 0 resembles that of white noise data.
+    """)
+    return
+
+
 if __name__ == "__main__":
     app.run()
