@@ -441,8 +441,7 @@ def _(MetricsGenerator, model_generator_returns):
 def _(mo):
     mo.md(r"""
     - The llf gradually becomes less negative, with slowing down AR_6 onwards.
-    - The AIC and HQIC decrease till AR_6 and then start to increase.
-    - The BIC reduces till AR_5 and then starts increasing sharply.
+    - The AIC, BIC and HQIC decrease till AR_6 and then start to increase.
     """)
     return
 
@@ -471,7 +470,7 @@ def _(MetricsGenerator, plt):
         Params:
         metrics: DataFrame from a tools.metrics_generator.MetricsGenerator object
         """
-    
+
         # Create 2 subplots
         fig, axes = plt.subplots(nrows=2, ncols=1, figsize=(10, 6))
 
@@ -729,8 +728,7 @@ def _(MetricsGenerator, model_generator_returns_norm):
 def _(mo):
     mo.md(r"""
     - The llf gradually becomes less negative, with slowing down AR_6 onwards.
-    - The AIC and HQIC decrease till AR_6 and then start to increase.
-    - The BIC reduces till AR_5 and then starts increasing.
+    - The AIC, BIC and HQIC decrease till AR_6 and then start to increase.
     """)
     return
 
