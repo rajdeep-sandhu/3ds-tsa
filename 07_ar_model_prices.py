@@ -18,7 +18,7 @@ def _(mo):
     #### **Description**
 
     - Load and simplify price data to use only FTSE prices.
-    - Generate test:train split, although not used in this notebook.
+    - Generate test:train split, although only the train part is used in this notebook.
     - Examine the ACF and PACF.
     - Generate the AR(1) model.
     - Generate higher-lag AR models.
