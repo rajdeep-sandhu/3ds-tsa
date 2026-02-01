@@ -13,8 +13,8 @@ def _(mo):
 @app.cell
 def _():
     import marimo as mo
-    import numpy as np
     import pandas as pd
+
     return mo, pd
 
 
@@ -30,7 +30,6 @@ def _(mo, pd):
     @mo.cache
     def load_csv_data():
         return pd.read_csv("Index2018.csv")
-
 
     df_comp = load_csv_data().copy()
     return (df_comp,)
@@ -139,9 +138,7 @@ def _(mo, pd):
 
         # Backfill ftse
         df_filled["ftse"] = df_filled["ftse"].bfill()
-        mo.output.append(
-            mo.vstack([mo.md("Backfill `ftse`"), df_filled.isna().sum()])
-        )
+        mo.output.append(mo.vstack([mo.md("Backfill `ftse`"), df_filled.isna().sum()]))
 
         # Fill dax and nikkei with their mean values
         for ticker in ["dax", "nikkei"]:
@@ -158,6 +155,7 @@ def _(mo, pd):
         )
 
         return df_filled
+
     return (fill_missing_values,)
 
 
