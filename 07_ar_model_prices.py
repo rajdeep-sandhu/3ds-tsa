@@ -43,6 +43,7 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
+
     return (
         ARIMA,
         Any,
@@ -89,6 +90,7 @@ def _(Path, mo, pd):
     def load_data(file_path: Path) -> pd.DataFrame:
         print("Reading from disk")
         return pd.read_csv(file_path)
+
     return (load_data,)
 
 
@@ -113,6 +115,7 @@ def _(pd):
         data_out = data_out.asfreq("b")
 
         return data_out
+
     return (set_date_index_frequency,)
 
 
@@ -129,6 +132,7 @@ def _(pd, set_date_index_frequency):
         df_cleaned = df_cleaned.ffill()
 
         return df_cleaned
+
     return (clean_dataset,)
 
 
@@ -146,6 +150,7 @@ def _(pd):
         del data_copy["nikkei"]
 
         return data_copy
+
     return (simplify_dataset,)
 
 
@@ -313,15 +318,14 @@ def _(ARIMA, Any, ModelGenerator, mo):
             model_function=ARIMA, model_name_prefix="AR", param_grid=param_grid
         )
         return model_generator
+
     return (generate_models,)
 
 
 @app.cell
 def _(df, generate_models):
     max_lags = 9
-    model_generator_prices = generate_models(
-        data=df["market_value"], max_lags=max_lags
-    )
+    model_generator_prices = generate_models(data=df["market_value"], max_lags=max_lags)
     return (model_generator_prices,)
 
 
@@ -406,9 +410,7 @@ def _(MetricsGenerator, model_generator_prices):
 @app.cell
 def _(metrics_prices):
     # Find models where both the final lag and the LLR Test p-values fail to reach significance.
-    metrics_prices.evaluation.query(
-        "final_lag_pval >= 0.05 and llr_test_pval >= 0.05"
-    )
+    metrics_prices.evaluation.query("final_lag_pval >= 0.05 and llr_test_pval >= 0.05")
     return
 
 
@@ -507,9 +509,7 @@ def _(mo):
 def _(df, model_generator_prices):
     # Get residuals from the AR_7 model result
     df_resid = df.copy()
-    df_resid["residuals_price"] = model_generator_prices.get_model("AR_7_0_0")[
-        1
-    ].resid
+    df_resid["residuals_price"] = model_generator_prices.get_model("AR_7_0_0")[1].resid
     return (df_resid,)
 
 
