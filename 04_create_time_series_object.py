@@ -50,7 +50,7 @@ def _(mo):
 def _(df_comp, mo):
     mo.vstack(
         [
-            mo.md(f"Before conversion to `datetime`"),
+            mo.md("**Before conversion to `datetime`**"),
             df_comp["date"].describe(),
         ]
     )
