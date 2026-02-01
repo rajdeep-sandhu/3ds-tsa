@@ -1,19 +1,20 @@
 import marimo
 
-__generated_with = "0.15.2"
+__generated_with = "0.19.6"
 app = marimo.App(width="full", app_title="07. The AR Model - Prices")
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# 07. The AR Model - Prices""")
+    mo.md(r"""
+    # 07. The AR Model - Prices
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     #### **Description**
 
     - Load and simplify price data to use only FTSE prices.
@@ -22,14 +23,16 @@ def _(mo):
     - Generate the AR(1) model.
     - Generate higher-lag AR models.
     - Review model results individually, and as a table and plot of metrics to select a canditate model.
-    - Review the residuals. 
-    """
-    )
+    - Review the residuals.
+    """)
     return
 
 
 @app.cell
 def _():
+    from pathlib import Path
+    from typing import Any
+
     import marimo as mo
     import matplotlib.pyplot as plt
     import pandas as pd
@@ -38,10 +41,8 @@ def _():
     import statsmodels.tsa.stattools as sts
     from statsmodels.tsa.arima.model import ARIMA
 
-    from pathlib import Path
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    from typing import Any
     return (
         ARIMA,
         Any,
@@ -52,13 +53,33 @@ def _():
         pd,
         plt,
         sgt,
+        sns,
         sts,
     )
 
 
+@app.cell
+def _(sns):
+    # set style using seaborn, although charts are handled by matplotlib.pyplot
+    sns.set_theme(context="notebook", style="white")
+
+    # CSS style for results
+    RESULT_CSS_STYLE = {
+        "font-family": "monospace",
+        "white-space": "pre-wrap",
+        "padding": "15px",
+        "max-width": "100%",
+        "font-size": "1.1em",
+        "background-color": "#f9f9f9",
+    }
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Load and Preprocess dataset""")
+    mo.md(r"""
+    ## Load and Preprocess dataset
+    """)
     return
 
 
@@ -143,7 +164,9 @@ def _(df_comp: "pd.DataFrame", pd, simplify_dataset):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Generate test:train split""")
+    mo.md(r"""
+    ## Generate test:train split
+    """)
     return
 
 
@@ -156,7 +179,9 @@ def _(df_ftse: "pd.DataFrame"):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## The ACF""")
+    mo.md(r"""
+    ## The ACF
+    """)
     return
 
 
@@ -172,32 +197,30 @@ def _(df, mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     - The coefficients slowly decline with lags.
     - All are positive.
     - All are significant.
     - This is similar to the ACF for the S&P500 conducted previously.
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     - A higher number of lags means a more coefficients and a better fit but makes the model prone to overfitting and poor generalisation.
     - A parsimonious model with fewer lags is better.
     - An efficient model should only include lags which have a **direct**, **significant** effect on the present value. This is determined using the PACF.
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## The PACF""")
+    mo.md(r"""
+    ## The PACF
+    """)
     return
 
 
@@ -221,21 +244,21 @@ def _(df, mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     - The first lag coefficient is greatly significant and **must** be included in the model.
     - Coefficients from lag 25 onwards are not significant and can be ignored. Since their values will be very close to 0, their impact on the model will be minimal.
     - The model should therefore include less than 25 lags.
     - A business month is 22 days, which means there will be cyclical changes. Values a month ago negatively affect the values today. However, these are overshadowed by more recent lags and their contribution should not be overanalysed.
     - NB Patterns are not always so convenient to spot.
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## The AR(1) Model""")
+    mo.md(r"""
+    ## The AR(1) Model
+    """)
     return
 
 
@@ -249,8 +272,7 @@ def _(ARIMA, df):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     - `const` refers to $C$. `coef` is its value.
     - `ar.L1` refers to `'market_value`. `coef` refers to $\phi_1$, which is the coefficient for the autoregressive value for 1 time period ago ($t-1$).
       - The coefficient is close to 1, which is similar to what the ACF and PACF graph indicate.
@@ -260,14 +282,15 @@ def _(mo):
     - As the **critical values** for both do not contain 0, both the coefficients are significant.
 
     Since both values are significantly different from 0, a more complex model can be tried for greater accuracy.
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Higher-Lag AR Models""")
+    mo.md(r"""
+    ## Higher-Lag AR Models
+    """)
     return
 
 
@@ -297,9 +320,7 @@ def _(ARIMA, Any, ModelGenerator, mo):
 @app.cell
 def _(df, generate_models):
     max_lags = 9
-    model_generator_prices = generate_models(
-        data=df["market_value"], max_lags=max_lags
-    )
+    model_generator_prices = generate_models(data=df["market_value"], max_lags=max_lags)
     return (model_generator_prices,)
 
 
@@ -314,7 +335,9 @@ def _(model_generator_prices):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Model Results""")
+    mo.md(r"""
+    ## Model Results
+    """)
     return
 
 
@@ -339,8 +362,7 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     **AR(2)**
 
     - The coefficients for $C$ and $\phi_1$ have changed. This is because some of the changes contributing to the present value can be attributed to lag 2.
@@ -358,14 +380,15 @@ def _(mo):
     - The P value of $\phi_3$ is more than 0.05, which indicates that it is not significant.
     - The log likelihood is higher than the AR(1) to AR(3) models, which suggests that the model is capturing more variation in the data.
     - However, the insignificance of $\phi_3$ raises concerns about overfitting.
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Create a dataframe to tabulate measures of interest""")
+    mo.md(r"""
+    ### Create a dataframe to tabulate measures of interest
+    """)
     return
 
 
@@ -380,15 +403,15 @@ def _(MetricsGenerator, model_generator_prices):
 @app.cell
 def _(metrics_prices):
     # Find models where both the final lag and the LLR Test p-values fail to reach significance.
-    metrics_prices.evaluation.query(
-        "final_lag_pval >= 0.05 and llr_test_pval >= 0.05"
-    )
+    metrics_prices.evaluation.query("final_lag_pval >= 0.05 and llr_test_pval >= 0.05")
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### Plot the test metrics""")
+    mo.md(r"""
+    ### Plot the test metrics
+    """)
     return
 
 
@@ -417,18 +440,18 @@ def _(metrics_prices, mo, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     - The p-values of both the final lag and the LLR Test are **non-significant** for AR(2), AR(8) and AR(9).
     - Of the remaining, Model AR(7) is selected based on the **lowest `aic` and `hqic`**, and a LLR Test is performed against AR(1) to confirm significance.
-    """
-    )
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""### LLR Test for the selected candidate model""")
+    mo.md(r"""
+    ### LLR Test for the selected candidate model
+    """)
     return
 
 
@@ -461,13 +484,17 @@ def _(metrics_prices, mo):
 
 @app.cell(hide_code=True)
 def _(mo, selected_model):
-    mo.md(f"""The returned p-value indicates that the **{selected_model} model** is significantly better than the AR_1 model.""")
+    mo.md(f"""
+    The returned p-value indicates that the **{selected_model} model** is significantly better than the AR_1 model.
+    """)
     return
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Analyse the Residuals""")
+    mo.md(r"""
+    ## Analyse the Residuals
+    """)
     return
 
 
@@ -498,12 +525,10 @@ def _(df_resid, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     - The mean is close to 0, which suggests that the model performs well.
     - However, the high variance indicates that the model might not perform well.
-    """
-    )
+    """)
     return
 
 
@@ -516,7 +541,9 @@ def _(df_resid, sts):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""- The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity.""")
+    mo.md(r"""
+    - The **ADF** t-statistic is much more negative than the the 5% critical value and the p-value is 0, both of which suggest stationarity.
+    """)
     return
 
 
@@ -533,7 +560,9 @@ def _(df_resid, mo, plt, sgt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor.""")
+    mo.md(r"""
+    The majority of residuals are not significantly different from 0, which fits the characteristics of white noise. However, the 3 values that are significantly different from 0 indicate that there might be a better predictor.
+    """)
     return
 
 
@@ -548,12 +577,10 @@ def _(df_resid, mo, plt):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     - The price residuals are mostly low and the time series does not indicate an obvious pattern, so the choice of model seems correct.
     - However, since an AR model is being used on non-stationary data, the predictions might still be incorrect.
-    """
-    )
+    """)
     return
 
 
