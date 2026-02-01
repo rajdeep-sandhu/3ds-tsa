@@ -1,12 +1,14 @@
 import marimo
 
-__generated_with = "0.15.2"
+__generated_with = "0.19.6"
 app = marimo.App(width="full", app_title="04. Create a Time Series Object")
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""# 04. Create a Time Series Object in Python""")
+    mo.md(r"""
+    # 04. Create a Time Series Object in Python
+    """)
     return
 
 
@@ -14,13 +16,14 @@ def _(mo):
 def _():
     import marimo as mo
     import pandas as pd
-
     return mo, pd
 
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Import the data""")
+    mo.md(r"""
+    ## Import the data
+    """)
     return
 
 
@@ -37,7 +40,9 @@ def _(mo, pd):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Describe the dataset and convert text date to datetime""")
+    mo.md(r"""
+    ## Describe the dataset and convert text date to datetime
+    """)
     return
 
 
@@ -76,7 +81,9 @@ def _(df_comp, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r"""## Set the Index to `date`""")
+    mo.md(r"""
+    ## Set the Index to `date`
+    """)
     return
 
 
@@ -90,12 +97,10 @@ def _(df_comp):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     ## Set the frequency to business days
     This is based on financial data being on weekdays.
-    """
-    )
+    """)
     return
 
 
@@ -108,12 +113,10 @@ def _(df_indexed):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     ## Handle Missing Values
     - Different approaches are used here for illustration only. In practice, a consistent approach should be used, depending on how best to handle missing values in that partivular series or dataset.
-    """
-    )
+    """)
     return
 
 
@@ -155,7 +158,6 @@ def _(mo, pd):
         )
 
         return df_filled
-
     return (fill_missing_values,)
 
 
@@ -167,12 +169,10 @@ def _(df_indexed_1, fill_missing_values):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     ## Simplify the Dataset
     Keep only `spx` market values.
-    """
-    )
+    """)
     return
 
 
@@ -192,14 +192,12 @@ def _(df_filled, mo):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(
-        r"""
+    mo.md(r"""
     ## Split the Data
     - Time series data cannot be shuffled.
     - A cut off point is used. Data prior to this is assigned to the training set. Data following this is assigned to the testing set.
     - An 80:20 split for training and testing data is reasonable to prevent overfitting and maintain accuracy.
-    """
-    )
+    """)
     return
 
 
@@ -219,7 +217,9 @@ def _(df_spx, train_size):
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md(r""" """)
+    mo.md(r"""
+ 
+    """)
     return
 
 
