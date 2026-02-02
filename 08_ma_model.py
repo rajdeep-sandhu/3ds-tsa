@@ -125,6 +125,29 @@ def _(pd):
 def _(clean_dataset, pd, raw_csv_data: "pd.DataFrame", simplify_dataset):
     df_comp: pd.DataFrame = clean_dataset(raw_csv_data)
     df_ftse: pd.DataFrame = simplify_dataset(df_comp)
+    return (df_ftse,)
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    ## Generate test:train split
+    """)
+    return
+
+
+@app.cell
+def _(mo):
+    mo.md(r"""
+    Only the `df` (train) part of the split is used in this notebook. The tests and models are based on this rather than the full dataset.
+    """)
+    return
+
+
+@app.cell
+def _(df_ftse: "pd.DataFrame"):
+    size = int(len(df_ftse) * 0.8)
+    df, df_test = df_ftse.iloc[:size].copy(), df_ftse.iloc[size:].copy()
     return
 
 
