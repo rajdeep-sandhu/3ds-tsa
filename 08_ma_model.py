@@ -85,6 +85,22 @@ def _(pd):
         data_out = data_out.asfreq("b")
 
         return data_out
+    return (set_date_index_frequency,)
+
+
+@app.cell
+def _(pd, set_date_index_frequency):
+    def clean_dataset(data: pd.DataFrame) -> pd.DataFrame:
+        """Clean the provided dataset."""
+        df_cleaned: pd.DataFrame = data.copy()
+
+        # Set date as index with frequency as business days.
+        df_cleaned = set_date_index_frequency(data=df_cleaned)
+
+        # Forward fill missing values
+        df_cleaned = df_cleaned.ffill()
+
+        return df_cleaned
     return
 
 
