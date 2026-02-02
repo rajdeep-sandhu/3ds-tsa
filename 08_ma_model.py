@@ -125,6 +125,13 @@ def _(pd):
 def _(clean_dataset, pd, raw_csv_data: "pd.DataFrame", simplify_dataset):
     df_comp: pd.DataFrame = clean_dataset(raw_csv_data)
     df_ftse: pd.DataFrame = simplify_dataset(df_comp)
+
+    # Calculate simple returns and convert to a percentage
+    df_ftse["returns"] = df_ftse["market_value"].pct_change(periods=1).mul(100)
+
+    # Remove the first row as returns cannot be calculated for the first row
+    df_ftse = df_ftse[1:]
+    df_ftse
     return (df_ftse,)
 
 
