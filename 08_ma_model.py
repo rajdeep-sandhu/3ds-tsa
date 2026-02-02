@@ -118,12 +118,13 @@ def _(pd):
         del data_copy["nikkei"]
 
         return data_copy
-    return
+    return (simplify_dataset,)
 
 
 @app.cell
-def _(clean_dataset, pd, raw_csv_data: "pd.DataFrame"):
+def _(clean_dataset, pd, raw_csv_data: "pd.DataFrame", simplify_dataset):
     df_comp: pd.DataFrame = clean_dataset(raw_csv_data)
+    df_ftse: pd.DataFrame = simplify_dataset(df_comp)
     return
 
 
