@@ -27,7 +27,7 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    return mo, sns
+    return Path, mo, pd, sns
 
 
 @app.cell
@@ -44,6 +44,23 @@ def _(sns):
         "font-size": "1.1em",
         "background-color": "#f9f9f9",
     }
+    return
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## Load and Preprocess Dataset
+    """)
+    return
+
+
+@app.cell
+def _(Path, mo, pd):
+    @mo.cache
+    def load_data(file_path: Path) -> pd.DataFrame:
+        print("Reading from disk")
+        return pd.read_csv(file_path)
     return
 
 
