@@ -104,5 +104,22 @@ def _(pd, set_date_index_frequency):
     return
 
 
+@app.cell
+def _(pd):
+    def simplify_dataset(data: pd.DataFrame) -> pd.DataFrame:
+        """Simplify dataset to a single ftse market value column."""
+
+        data_copy: pd.DataFrame = data.copy()
+        data_copy["market_value"] = data_copy.ftse
+
+        del data_copy["spx"]
+        del data_copy["dax"]
+        del data_copy["ftse"]
+        del data_copy["nikkei"]
+
+        return data_copy
+    return
+
+
 if __name__ == "__main__":
     app.run()
