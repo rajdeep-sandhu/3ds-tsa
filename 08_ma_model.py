@@ -61,6 +61,13 @@ def _(Path, mo, pd):
     def load_data(file_path: Path) -> pd.DataFrame:
         print("Reading from disk")
         return pd.read_csv(file_path)
+    return (load_data,)
+
+
+@app.cell
+def _(Path, load_data, pd):
+    csv_file: Path = Path.cwd().joinpath("Index2018.csv")
+    raw_csv_data: pd.DataFrame = load_data(csv_file)
     return
 
 
