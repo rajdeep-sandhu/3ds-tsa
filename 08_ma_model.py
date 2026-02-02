@@ -122,6 +122,14 @@ def _(pd):
 
 
 @app.cell
+def _(mo):
+    mo.md(r"""
+    ### Simplify dataset and add returns
+    """)
+    return
+
+
+@app.cell
 def _(clean_dataset, pd, raw_csv_data: "pd.DataFrame", simplify_dataset):
     df_comp: pd.DataFrame = clean_dataset(raw_csv_data)
     df_ftse: pd.DataFrame = simplify_dataset(df_comp)
