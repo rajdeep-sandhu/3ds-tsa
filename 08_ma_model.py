@@ -71,5 +71,22 @@ def _(Path, load_data, pd):
     return
 
 
+@app.cell
+def _(pd):
+    def set_date_index_frequency(data: pd.DataFrame) -> pd.DataFrame:
+        """
+        Set date to datetime index.
+        Set frequency to business days
+        """
+
+        data_out: pd.DataFrame = data.copy()
+        data_out["date"] = pd.to_datetime(data_out["date"], dayfirst=True)
+        data_out = data_out.set_index("date")
+        data_out = data_out.asfreq("b")
+
+        return data_out
+    return
+
+
 if __name__ == "__main__":
     app.run()
