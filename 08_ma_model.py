@@ -27,7 +27,14 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    return (mo,)
+    return mo, sns
+
+
+@app.cell
+def _(sns):
+    # set style using seaborn, although charts are handled by matplotlib.pyplot
+    sns.set_theme(context="notebook", style="white")
+    return
 
 
 if __name__ == "__main__":
