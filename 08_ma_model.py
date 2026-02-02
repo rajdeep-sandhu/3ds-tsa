@@ -27,7 +27,7 @@ def _():
 
     from tools.metrics_generator import MetricsGenerator
     from tools.model_generator import ModelGenerator
-    return Path, mo, pd, sns
+    return Path, mo, pd, plt, sgt, sns
 
 
 @app.cell
@@ -163,6 +163,24 @@ def _(mo):
 def _(df_ftse: "pd.DataFrame"):
     size = int(len(df_ftse) * 0.8)
     df, df_test = df_ftse.iloc[:size].copy(), df_ftse.iloc[size:].copy()
+    return (df,)
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    mo.md(r"""
+    ## ACF for Returns
+    """)
+    return
+
+
+@app.cell
+def _(df, mo, plt, sgt):
+    sgt.plot_acf(df["returns"], zero=False, lags=40, auto_ylims=True)
+    plt.title("ACF: FTSE Returns", size=24)
+    plt.xlabel("Lags")
+    plt.ylabel("Autocorrelation Coefficient")
+    mo.as_html(plt.gcf())
     return
 
 
