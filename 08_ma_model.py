@@ -68,7 +68,7 @@ def _(Path, mo, pd):
 def _(Path, load_data, pd):
     csv_file: Path = Path.cwd().joinpath("Index2018.csv")
     raw_csv_data: pd.DataFrame = load_data(csv_file)
-    return
+    return (raw_csv_data,)
 
 
 @app.cell
@@ -101,7 +101,7 @@ def _(pd, set_date_index_frequency):
         df_cleaned = df_cleaned.ffill()
 
         return df_cleaned
-    return
+    return (clean_dataset,)
 
 
 @app.cell
@@ -118,6 +118,12 @@ def _(pd):
         del data_copy["nikkei"]
 
         return data_copy
+    return
+
+
+@app.cell
+def _(clean_dataset, pd, raw_csv_data: "pd.DataFrame"):
+    df_comp: pd.DataFrame = clean_dataset(raw_csv_data)
     return
 
 
